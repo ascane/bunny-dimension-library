@@ -1,7 +1,5 @@
 package structure;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 
 public class BinaryTree<T> {
@@ -29,29 +27,6 @@ public class BinaryTree<T> {
 			this.right = right;
 			right.parent = this;
 		}
-	}
-	
-	public static void main(String[] args) {
-		BinaryTree<Integer> TREE = 
-				new BinaryTree<Integer>(3, 
-						new BinaryTree<Integer>(1,
-								null,
-								new BinaryTree<Integer>(4)),
-						new BinaryTree<Integer>(2,
-								new BinaryTree<Integer>(6,
-										new BinaryTree<Integer>(5),
-										null),
-								new BinaryTree<Integer>(8)));
-		
-		List<Integer> returned = new LinkedList<>();
-		int count = 0;
-		for (Iterator<BinaryTree<Integer>> it = TREE.getPreorderIterator(); it.hasNext(); count++) {
-			returned.add(it.next().value);
-			if (count > 100) {
-				break;
-			}
-		}
-		System.out.println(returned);
 	}
 	
 	public String toString() {
