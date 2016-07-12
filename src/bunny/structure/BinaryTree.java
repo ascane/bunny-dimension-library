@@ -1,0 +1,184 @@
+package bunny.structure;
+import java.util.ArrayDeque;
+import java.util.Iterator;
+import java.util.Queue;
+import java.util.function.Function;
+
+public class BinaryTree<T> {
+	
+	private enum State {
+		FROM_PARENT, FROM_LEFT, FROM_RIGHT;
+	};
+	
+	private enum OrderType {PREORDER, INORDER, POSTORDER};
+	
+	public T value;
+	public BinaryTree<T> parent, left, right;
+	
+	public BinaryTree(T value) {
+		this.value = value;
+		this.parent = null;
+		this.left = null;
+		this.right = null;
+	}
+	
+	public BinaryTree(T value, BinaryTree<T> left, BinaryTree<T> right) {
+		this.value = value;
+		this.parent = null;
+		if (left != null) {
+			this.left = left;
+			left.parent = this;
+		}
+		if (right != null) {
+			this.right = right;
+			right.parent = this;
+		}
+	}
+	
+	public Iterator<BinaryTree<T>> getPreorderIterator() {
+		return new BinaryTreeXorderIterator(OrderType.PREORDER);
+	}
+	
+	public Iterator<BinaryTree<T>> getInorderIterator() {
+		return new BinaryTreeXorderIterator(OrderType.INORDER);
+	}
+	
+	public Iterator<BinaryTree<T>> getPostorderIterator() {
+		return new BinaryTreeXorderIterator(OrderType.POSTORDER);
+	}
+	
+	public Iterator<BinaryTree<T>> getBFSIterator() {
+		return new BinaryTreeBFSIterator();
+	}
+	
+	public boolean isLeaf() {
+		return this.left == null && this.right == null;
+	}
+	
+	public String toString() {
+		return toString((T t) -> t.toString());
+	}
+	
+	public String toString(Function<T, String> F) {
+		if (this.isLeaf()) {
+			return F.apply(value);
+		}
+		return String.format("%s(%s,%s)", 
+				F.apply(value),
+				left == null ? "" : left.toString(F),
+						right == null ? "" : right.toString(F));
+	}
+	
+	private class BinaryTreeXorderIterator implements Iterator<BinaryTree<T>> {
+		
+		private OrderType type;
+		private BinaryTree<T> root;
+		private BinaryTree<T> current;
+		
+		private State state;
+		boolean finished;
+		
+		public BinaryTreeXorderIterator(OrderType type) {
+			this.type = type;
+			this.root = BinaryTree.this;
+			this.current = root;
+			this.state = State.FROM_PARENT;
+			this.finished = false;
+			if (type != OrderType.PREORDER) {
+				prepareForNext();
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !finished;
+		}
+
+		@Override
+		public BinaryTree<T> next() {
+			BinaryTree<T> result = current;
+			prepareForNext();
+			return result;
+		}
+		
+		private void prepareForNext() {
+			while (true) {
+				if (state == State.FROM_PARENT) {
+					if (current.left != null) {
+						current = current.left;
+						if (type == OrderType.PREORDER) {
+							break;
+						}
+					} else {
+						state = State.FROM_LEFT;
+						if (type == OrderType.INORDER) {
+							break;
+						}
+					}
+				}
+				if (state == State.FROM_LEFT) {
+					if (current.right != null) {
+						current = current.right;
+						state = State.FROM_PARENT;
+						if (type == OrderType.PREORDER) {
+							break;
+						}
+					} else {
+						state = State.FROM_RIGHT;
+						if (type == OrderType.POSTORDER) {
+							break;
+						}
+					}
+				}
+				if (state == State.FROM_RIGHT) {
+					if (current == root) {
+						finished = true;
+						break;
+					} else {
+						BinaryTree<T> last = current;
+						current = current.parent;
+						if (current.left == last) {
+							state = State.FROM_LEFT;
+							if (type == OrderType.INORDER) {
+								break;
+							}
+						} else {
+							state = State.FROM_RIGHT;
+							if (type == OrderType.POSTORDER) {
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private class BinaryTreeBFSIterator implements Iterator<BinaryTree<T>> {
+		
+		private Queue<BinaryTree<T>> toCheck;
+		
+		public BinaryTreeBFSIterator() {
+			toCheck = new ArrayDeque<>();
+			toCheck.add(BinaryTree.this);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !toCheck.isEmpty();
+		}
+
+		@Override
+		public BinaryTree<T> next() {
+			BinaryTree<T> current = toCheck.remove();
+			if (current.left != null) {
+				toCheck.add(current.left);
+			}
+			if (current.right != null) {
+				toCheck.add(current.right);
+			}
+			return current;
+		}
+		
+	}
+}
