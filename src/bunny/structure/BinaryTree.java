@@ -2,7 +2,6 @@ package bunny.structure;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Queue;
-import java.util.function.Function;
 
 public class BinaryTree<T> {
 	
@@ -55,18 +54,15 @@ public class BinaryTree<T> {
 		return this.left == null && this.right == null;
 	}
 	
+	@Override
 	public String toString() {
-		return toString((T t) -> t.toString());
-	}
-	
-	public String toString(Function<T, String> F) {
 		if (this.isLeaf()) {
-			return F.apply(value);
+			return value.toString();
 		}
 		return String.format("%s(%s,%s)", 
-				F.apply(value),
-				left == null ? "" : left.toString(F),
-						right == null ? "" : right.toString(F));
+				value.toString(),
+				left == null ? "" : left.toString(),
+				right == null ? "" : right.toString());
 	}
 	
 	private class BinaryTreeXorderIterator implements Iterator<BinaryTree<T>> {
