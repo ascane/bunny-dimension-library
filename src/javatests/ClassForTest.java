@@ -38,7 +38,6 @@ public class ClassForTest {
 
 		testCombinations();
 		testPermutations();
-		testPrimes();
 		testRandomness();
 		testListView();
 		testSuperFor();
@@ -49,7 +48,6 @@ public class ClassForTest {
 		testHashMultiset();
 		testOrdering();
 		//testCodeMerger();
-
 
 		w.close();
 	}
@@ -91,25 +89,6 @@ public class ClassForTest {
 			}
 		}
 		w.println(sum);
-	}
-
-	public static void testPrimes() {
-		w.println("Testing Primes...");
-		w.println(Primes.get(4));
-		w.println(Primes.getPrimeList(10));
-		w.println(Primes.getSmallestPrimeGreaterThen(50));
-		w.println(Primes.getSmallestPrimeGreaterThen(53));
-		w.println(Primes.getGreatestPrimeSmallerThen(100));
-		w.println(Primes.getGreatestPrimeSmallerThen(107));
-		w.println(Primes.isPrime(100007));
-		w.println(Primes.isPrime(100019));
-		w.println(Primes.isPrimeAndUpdateTable(100007));
-		w.println(Primes.isPrimeAndUpdateTable(100019));
-		w.println(Primes.getIndexOfSmallestPrimeGreaterThen(100007));
-		w.println(Primes.getSmallestPrimeGreaterThen(100007));
-		w.println(Primes.isPrime(37124508045065437L));
-		w.println(Primes.getDivisorCount(600));
-		w.println(Primes.getDivisors(600));
 	}
 	
 	public static void testRandomness() {
