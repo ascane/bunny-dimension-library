@@ -5,10 +5,7 @@ import java.util.Queue;
 
 public class BinaryTree<T> {
 	
-	private enum State {
-		FROM_PARENT, FROM_LEFT, FROM_RIGHT;
-	};
-	
+	private enum IterateState {FROM_PARENT, FROM_LEFT, FROM_RIGHT;};
 	private enum OrderType {PREORDER, INORDER, POSTORDER};
 	
 	public T value;
@@ -34,6 +31,14 @@ public class BinaryTree<T> {
 		}
 	}
 	
+	public boolean isLeaf() {
+		return this.left == null && this.right == null;
+	}
+	
+	public boolean isRoot() {
+		return this.parent == null;
+	}
+	
 	public Iterator<BinaryTree<T>> getPreorderIterator() {
 		return new BinaryTreeXorderIterator(OrderType.PREORDER);
 	}
@@ -48,10 +53,6 @@ public class BinaryTree<T> {
 	
 	public Iterator<BinaryTree<T>> getBFSIterator() {
 		return new BinaryTreeBFSIterator();
-	}
-	
-	public boolean isLeaf() {
-		return this.left == null && this.right == null;
 	}
 	
 	@Override
@@ -71,14 +72,14 @@ public class BinaryTree<T> {
 		private BinaryTree<T> root;
 		private BinaryTree<T> current;
 		
-		private State state;
+		private IterateState state;
 		boolean finished;
 		
 		public BinaryTreeXorderIterator(OrderType type) {
 			this.type = type;
 			this.root = BinaryTree.this;
 			this.current = root;
-			this.state = State.FROM_PARENT;
+			this.state = IterateState.FROM_PARENT;
 			this.finished = false;
 			if (type != OrderType.PREORDER) {
 				prepareForNext();
@@ -99,34 +100,34 @@ public class BinaryTree<T> {
 		
 		private void prepareForNext() {
 			while (true) {
-				if (state == State.FROM_PARENT) {
+				if (state == IterateState.FROM_PARENT) {
 					if (current.left != null) {
 						current = current.left;
 						if (type == OrderType.PREORDER) {
 							break;
 						}
 					} else {
-						state = State.FROM_LEFT;
+						state = IterateState.FROM_LEFT;
 						if (type == OrderType.INORDER) {
 							break;
 						}
 					}
 				}
-				if (state == State.FROM_LEFT) {
+				if (state == IterateState.FROM_LEFT) {
 					if (current.right != null) {
 						current = current.right;
-						state = State.FROM_PARENT;
+						state = IterateState.FROM_PARENT;
 						if (type == OrderType.PREORDER) {
 							break;
 						}
 					} else {
-						state = State.FROM_RIGHT;
+						state = IterateState.FROM_RIGHT;
 						if (type == OrderType.POSTORDER) {
 							break;
 						}
 					}
 				}
-				if (state == State.FROM_RIGHT) {
+				if (state == IterateState.FROM_RIGHT) {
 					if (current == root) {
 						finished = true;
 						break;
@@ -134,12 +135,12 @@ public class BinaryTree<T> {
 						BinaryTree<T> last = current;
 						current = current.parent;
 						if (current.left == last) {
-							state = State.FROM_LEFT;
+							state = IterateState.FROM_LEFT;
 							if (type == OrderType.INORDER) {
 								break;
 							}
 						} else {
-							state = State.FROM_RIGHT;
+							state = IterateState.FROM_RIGHT;
 							if (type == OrderType.POSTORDER) {
 								break;
 							}
