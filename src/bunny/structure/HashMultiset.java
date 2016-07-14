@@ -133,7 +133,7 @@ public class HashMultiset<T> extends AbstractSet<T> implements Multiset<T>{
 	}
 	@Override
 	public Set<Entry<T>> entrySet() {
-		return new SetWrapper<Entry<T>, Map.Entry<T, Integer>>(map.entrySet(), new Function<Map.Entry<T, Integer>, Entry<T>>() {
+		return new SetWrapper<Map.Entry<T, Integer>, Entry<T>>(map.entrySet(), new Function<Map.Entry<T, Integer>, Entry<T>>() {
 			@Override
 			public Entry<T> apply(Map.Entry<T, Integer> t) {return new HashMultisetEntry(t);}
 		}).readOnly();

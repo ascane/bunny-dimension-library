@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 
-public class SetWrapper<T, E> extends AbstractSet<T> {
+public class SetWrapper<E, T> extends AbstractSet<T> {
 
 	private Set<E> original;
 	private Function<E, T> map;
@@ -39,7 +39,7 @@ public class SetWrapper<T, E> extends AbstractSet<T> {
 		return original.add(mapBack.apply(element));
 	}
 	
-	public SetWrapper<T, E> readOnly() {
+	public SetWrapper<E, T> readOnly() {
 		readOnly = true;
 		return this;
 	}

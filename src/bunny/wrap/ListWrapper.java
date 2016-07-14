@@ -4,7 +4,7 @@ import java.util.AbstractList;
 import java.util.List;
 import java.util.function.Function;
 
-public class ListWrapper<T, E> extends AbstractList<T> {
+public class ListWrapper<E, T> extends AbstractList<T> {
 
 	private List<E> original;
 	private Function<E, T> map;
@@ -53,7 +53,7 @@ public class ListWrapper<T, E> extends AbstractList<T> {
 		return map.apply(original.remove(index));
 	}
 	
-	public ListWrapper<T, E> readOnly() {
+	public ListWrapper<E, T> readOnly() {
 		readOnly = true;
 		return this;
 	}

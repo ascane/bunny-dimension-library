@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class Wrapper<T, E> extends AbstractCollection<T> {
+public class Wrapper<E, T> extends AbstractCollection<T> {
 
 	private Collection<E> original;
 	private Function<E, T> map;
@@ -39,7 +39,7 @@ public class Wrapper<T, E> extends AbstractCollection<T> {
 		return original.add(mapBack.apply(element));
 	}
 	
-	public Wrapper<T, E> readOnly() {
+	public Wrapper<E, T> readOnly() {
 		readOnly = true;
 		return this;
 	}

@@ -479,7 +479,7 @@ public class ClassForTest {
 		w.println(ms, "size:" + ms.size());
 		ms.setCount(0, 1);
 		w.println(ms, "size:" + ms.size());
-		w.println(new SetWrapper<String, Multiset.Entry<Integer>>(ms.entrySet(), new Function<Multiset.Entry<Integer>, String>() {
+		w.println(new SetWrapper<Multiset.Entry<Integer>, String>(ms.entrySet(), new Function<Multiset.Entry<Integer>, String>() {
 			@Override
 			public String apply(Entry<Integer> e) {return "[Element:" + e.getElement() + " Count:" + e.getCount() + "]";}
 		}));
@@ -567,97 +567,4 @@ public class ClassForTest {
 		CodeMerger.merge("src/ClassForTest.java");
 	}
 	
-	public static void eular34() {
-		int sumsum = 0;
-		for (int i = 10; i < 2000000; i++) {
-			int[] digits = Base.getDigits(i);
-			int sum = 0;
-			for (int j = 0; j < digits.length; j++) {
-				sum += ModuloCalculation.factorial(digits[j]);
-			}
-			if (sum == i) {
-				w.println(i);
-				sumsum += sum;
-			}
-		}
-		w.println(sumsum + "!");
-	}
-	
-	public static void eular35() {
-		int i = 0;
-		int count = 0;
-		int p;
-		while ((p = Primes.get(i++)) < 1000000) {
-			boolean isCP = true;
-			/*ArrayList<Integer> digits = new ArrayList<Integer>(Lists.asList(Lists.toObjectArray(Base.getDigits(p))));
-			for (int t = 0; t < digits.size() - 1; t++) {
-				Collections.rotate(digits, 1);
-				if (!Primes.isPrime(Base.fromDigits(Lists.toPrimitiveArray(digits.toArray(new Integer[0]))))) {
-					isCP = false;
-					break;
-				}
-			}*/
-			ListView<Integer> digits = ListView.of(Base.getDigits(p));
-			for (int t = 0; t < digits.size() - 1; t++) {
-				digits.rotate(1);
-				if (!Primes.isPrime(Base.fromDigits(Data.toPrimitiveIntArray(digits)))) {
-					isCP = false;
-					break;
-				}
-			}
-			if (isCP) {
-				count++;
-				w.print(p + " ");
-			}
-		}
-		w.println();
-		w.println(count + "!");
-	}
-	
-	public static void eular36() {
-		int sum = 0;
-		for (int i = 0; i < 1000000; i++) {
-			String digits10 = i + "";
-			String digits2 = Base.toString(i, 2);
-			
-			if (new StringBuilder(digits10).reverse().toString().equals(digits10) && 
-				new StringBuilder(digits2).reverse().toString().equals(digits2)) {
-				w.println(digits10 + "  " + digits2);
-				sum += i;
-			}
-		}
-		w.println(sum + "!");
-	}
-	
-	public static void eular37(Writer w) {
-		ArrayList<Long> left = Data.toArrayList(2L, 3L, 5L, 7L);
-		for (int i = 0; i < left.size(); i++) {
-			for (int d = 1; d <= 9; d++) {
-				long p = left.get(i) * 10 + d;
-				if (Primes.isPrime(p)) {
-					left.add(p);
-				}
-			}
-		}
-		w.println(left);
-		
-		long sum = 0;
-		for (int i = 0; i < left.size(); i++) {
-			boolean trun = true;
-			long n = left.get(i);
-			for (int l = Base.getDigitLength(n) - 1; l >= 1; l--) {
-				n %= U.pow(10, l);
-				if (!Primes.isPrime(n)) {
-					trun = false;
-					break;
-				}
-			}
-			if (trun && left.get(i) > 10) {
-				w.print(left.get(i) + " ");
-				sum += left.get(i);
-			}
-		}
-		w.println();
-		w.println(sum + "!");
-	}
 }
