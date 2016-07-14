@@ -18,16 +18,16 @@ public class PrimesTest {
 		assertEquals(11, Primes.get(4));
 		assertEquals(Data.asList(2,3,5,7,11,13,17,19,23,29), Primes.getPrimeList(10));
 		assertEquals(Data.asList(2,3,5,7,11,13,17,19,23,29,31,37), Primes.getPrimeListBelow(40));
-		assertEquals(53, Primes.getSmallestPrimeGreaterThen(50));
-		assertEquals(53, Primes.getSmallestPrimeGreaterThen(53));
-		assertEquals(97, Primes.getGreatestPrimeSmallerThen(100));
-		assertEquals(107, Primes.getGreatestPrimeSmallerThen(107));
+		assertEquals(53, Primes.getSmallestPrimeGreaterThan(50));
+		assertEquals(53, Primes.getSmallestPrimeGreaterThan(53));
+		assertEquals(97, Primes.getGreatestPrimeSmallerThan(100));
+		assertEquals(107, Primes.getGreatestPrimeSmallerThan(107));
 		assertFalse(Primes.isPrime(100007));
 		assertTrue(Primes.isPrime(100019));
 		assertFalse(Primes.isPrimeAndUpdateTable(100007));
 		assertTrue(Primes.isPrimeAndUpdateTable(100019));
-		assertEquals(100019, Primes.get(Primes.getIndexOfSmallestPrimeGreaterThen(100007)));
-		assertEquals(100019, Primes.getSmallestPrimeGreaterThen(100007));
+		assertEquals(100019, Primes.get(Primes.getIndexOfSmallestPrimeGreaterThan(100007)));
+		assertEquals(100019, Primes.getSmallestPrimeGreaterThan(100007));
 		assertTrue(Primes.isPrime(37124508045065437L));
 		assertEquals(24, Primes.getDivisorCount(600));
 		assertEquals(

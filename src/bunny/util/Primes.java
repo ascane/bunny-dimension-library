@@ -23,22 +23,22 @@ public class Primes {
 	}
 	public static List<Integer> getPrimeListBelow(int number) {
 		updatePrimesUpTo(number);
-		int n = getIndexOfGreatestPrimeSmallerThen(number) + 1;
+		int n = getIndexOfGreatestPrimeSmallerThan(number) + 1;
 		return ListView.of(primes).range(0, n).readOnly();
 	}
-	public static int getIndexOfSmallestPrimeGreaterThen(int number) {
+	public static int getIndexOfSmallestPrimeGreaterThan(int number) {
 		updatePrimesUpTo(number);
-		return Lists.binarySearchSmallestGreaterThen(primes, number);
+		return Lists.binarySearchSmallestGreaterThan(primes, number);
 	}
-	public static int getSmallestPrimeGreaterThen(int number) {
-		return primes.get(getIndexOfSmallestPrimeGreaterThen(number));
+	public static int getSmallestPrimeGreaterThan(int number) {
+		return primes.get(getIndexOfSmallestPrimeGreaterThan(number));
 	}
-	public static int getIndexOfGreatestPrimeSmallerThen(int number) {
+	public static int getIndexOfGreatestPrimeSmallerThan(int number) {
 		updatePrimesUpTo(number);
-		return Lists.binarySearchGreatestSmallerThen(primes, number);
+		return Lists.binarySearchGreatestSmallerThan(primes, number);
 	}
-	public static int getGreatestPrimeSmallerThen(int number) {
-		return primes.get(getIndexOfGreatestPrimeSmallerThen(number));
+	public static int getGreatestPrimeSmallerThan(int number) {
+		return primes.get(getIndexOfGreatestPrimeSmallerThan(number));
 	}
 	public static boolean isPrime(long number) {
 		if (number < 2) return false;

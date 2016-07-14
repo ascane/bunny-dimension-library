@@ -20,10 +20,10 @@ public class Lists {
 		return Collections.binarySearch(list, key, c);
 	}
 	
-	public static <T extends Comparable<? super T>> int binarySearchSmallestGreaterThen(List<T> list, T key) {
-		return binarySearchSmallestGreaterThen(list, key, Ordering.natural());
+	public static <T extends Comparable<? super T>> int binarySearchSmallestGreaterThan(List<T> list, T key) {
+		return binarySearchSmallestGreaterThan(list, key, Ordering.natural());
 	}
-	public static <T> int binarySearchSmallestGreaterThen(List<? extends T> list, T key, Comparator<? super T> c) {
+	public static <T> int binarySearchSmallestGreaterThan(List<? extends T> list, T key, Comparator<? super T> c) {
 		int n = list.size();
 		if (c.compare(list.get(n - 1), key) < 0) return -1;
 		int st = 0, ed = n - 1;
@@ -39,10 +39,10 @@ public class Lists {
 		return st;
 	}
 	
-	public static <T extends Comparable<? super T>> int binarySearchGreatestSmallerThen(List<T> list, T key) {
-		return binarySearchGreatestSmallerThen(list, key, Ordering.natural());
+	public static <T extends Comparable<? super T>> int binarySearchGreatestSmallerThan(List<T> list, T key) {
+		return binarySearchGreatestSmallerThan(list, key, Ordering.natural());
 	}
-	public static <T> int binarySearchGreatestSmallerThen(List<? extends T> list, T key, Comparator<? super T> c) {
+	public static <T> int binarySearchGreatestSmallerThan(List<? extends T> list, T key, Comparator<? super T> c) {
 		int n = list.size();
 		if (c.compare(list.get(0), key) > 0) return -1;
 		int st = 0, ed = n - 1;
