@@ -16,6 +16,14 @@ public class View<T> extends AbstractCollection<T> {
 	public View(Collection<T> original) {
 		this.original = original;
 	}
+	
+	protected void addBehavior(T element) {
+		// To be overridden
+	}
+	
+	protected void removeBehavior(T element) {
+		// To be overridden
+	}
 
 	@Override
 	public int size() {
@@ -25,6 +33,7 @@ public class View<T> extends AbstractCollection<T> {
 	@Override
 	public boolean add(T element) {
 		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
+		addBehavior(element);
 		return original.add(element);
 	}
 	
@@ -40,16 +49,18 @@ public class View<T> extends AbstractCollection<T> {
 	
 	public class ViewIterator implements Iterator<T> {
 		public Iterator<T> original;
+		private T last;
 		public ViewIterator(Iterator<T> original) {
 			this.original = original;
 		}
 		@Override
 		public boolean hasNext() {return original.hasNext();}
 		@Override
-		public T next() {return original.next();}
+		public T next() {return last = original.next();}
 		@Override
 		public void remove() {
 			if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
+			removeBehavior(last);
 			original.remove();
 		}
 	}

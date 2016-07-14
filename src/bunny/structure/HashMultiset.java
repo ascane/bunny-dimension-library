@@ -133,14 +133,15 @@ public class HashMultiset<T> extends AbstractSet<T> implements Multiset<T>{
 	}
 	@Override
 	public Set<Entry<T>> entrySet() {
-		return new SetWrapper<Map.Entry<T, Integer>, Entry<T>>(map.entrySet(), new Function<Map.Entry<T, Integer>, Entry<T>>() {
+		return new HashMultisetEntrySet(new SetWrapper<Map.Entry<T, Integer>, Entry<T>>(map.entrySet(), 
+		new Function<Map.Entry<T, Integer>, Entry<T>>() {
 			@Override
 			public Entry<T> apply(Map.Entry<T, Integer> t) {return new HashMultisetEntry(t);}
-		}).readOnly();
+		}));
 	}
 	@Override
 	public Set<T> elementSet() {
-		return SetView.of(map.keySet()).readOnly();
+		return new HashMultisetElementSet(map.keySet());
 	}
 	@Override
 	public Iterator<T> iterator() {
@@ -202,6 +203,40 @@ public class HashMultiset<T> extends AbstractSet<T> implements Multiset<T>{
 		public T getElement() {return mapEntry.getKey();}
 		@Override
 		public int getCount() {return mapEntry.getValue();}
+		
+	}
+	
+	private class HashMultisetEntrySet extends SetView<Entry<T>> {
+
+		public HashMultisetEntrySet(Set<Entry<T>> original) {
+			super(original);
+		}
+		
+		@Override
+		protected void addBehavior(Entry<T> element) {
+			throw new UnsupportedOperationException("Cannot add entry to Multiset's entrySet view!");
+		}
+		@Override
+		protected void removeBehavior(Entry<T> element) {
+			count -= element.getCount();
+		}
+		
+	}
+	
+	private class HashMultisetElementSet extends SetView<T> {
+		
+		public HashMultisetElementSet(Set<T> original) {
+			super(original);
+		}
+		
+		@Override
+		protected void addBehavior(T element) {
+			throw new UnsupportedOperationException("Cannot add element to Multiset's elementSet view!");
+		}
+		@Override
+		protected void removeBehavior(T element) {
+			count -= map.get(element);
+		}
 		
 	}
 	
