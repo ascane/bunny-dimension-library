@@ -13,10 +13,10 @@ public class CodeTemplate {
 	public static void main(String[] args) {
 		try {
 			Reader r = new Reader("data.in");
-			//Reader r = new Reader(); // for standard input
+			//Reader r = new Reader(System.in); // for standard input
 			
 			Writer w = new Writer("answer.txt");
-			//Writer w = new Writer(); // for standard output
+			//Writer w = new Writer(System.out); // for standard output
 			
 			Problem.init();
 

@@ -3,21 +3,31 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 public class Reader {
 	
-	private InputStreamReader input;
+	private java.io.Reader inputReader;
 	public BufferedReader reader;
 	public char[] delimiters = {' ', ','};
 	
-	public Reader() {
-		input = new InputStreamReader(System.in);
-		reader = new BufferedReader(input, 1024);
+	public static Reader ofString(String string) {
+		return new Reader(new StringReader(string));
+	}
+	
+	public Reader(InputStream input) {
+		inputReader = new InputStreamReader(input);
+		reader = new BufferedReader(inputReader, 1024);
 	}
 	public Reader(String path) throws FileNotFoundException {
-		input = new FileReader(path);
-		reader = new BufferedReader(input, 1024);
+		inputReader = new FileReader(path);
+		reader = new BufferedReader(inputReader, 1024);
+	}
+	private Reader(StringReader sr) {
+		inputReader = sr;
+		reader = new BufferedReader(inputReader, 1024);
 	}
 	
 	public char readChar() throws IOException {
@@ -129,7 +139,7 @@ public class Reader {
 	
 	public void close() throws IOException {
 		reader.close();
-		input.close();
+		inputReader.close();
 	}
 	
 	private boolean isDelimiter(char c) {

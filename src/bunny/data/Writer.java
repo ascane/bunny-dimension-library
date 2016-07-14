@@ -1,18 +1,30 @@
 package bunny.data;
 
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Iterator;
 
 public class Writer extends PrintWriter {
 	
 	public String delimiter = " ";
 	
-	public Writer() {
-		super(System.out);
+	private StringWriter stringWriter;
+	
+	public static Writer ofString() {
+		return new Writer(new StringWriter());
+	}
+
+	public Writer(OutputStream output) {
+		super(output);
 	}
 	public Writer(String path) throws FileNotFoundException {
 		super(path);
+	}
+	private Writer(StringWriter sw) {
+		super(sw);
+		stringWriter = sw;
 	}
 	
 	public void print(String[] array) {
@@ -119,5 +131,11 @@ public class Writer extends PrintWriter {
 	public <T> void println(Iterator<T> iterator) {
 		print(iterator);
 		println();
+	}
+	
+	@Override
+	public String toString() {
+		if (stringWriter == null) return super.toString();
+		return stringWriter.toString();
 	}
 }

@@ -34,7 +34,7 @@ public class ClassForTest {
 	static Writer w;
 	
 	public static void main(String[] args) {
-		w = new Writer();
+		w = new Writer(System.out);
 
 		testCombinations();
 		testPermutations();
