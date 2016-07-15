@@ -167,6 +167,14 @@ public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
 			if (list == null) throw new IndexOutOfBoundsException();
 			return list.remove(index);
 		}
+		
+		@Override
+		public void clear() {
+			List<V> list = map.get(key);
+			if (list != null) {
+				list.clear();
+			}
+		}
 	}
 	
 	private class MultimapEntry implements Entry<K, V> {

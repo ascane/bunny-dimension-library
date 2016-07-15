@@ -1,5 +1,6 @@
 package bunny.structure;
 
+import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +36,59 @@ public class ArrayListMultimap<K, V> extends AbstractMultimap<K, V> {
 
 	@Override
 	public Map<K, List<V>> asMap() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayListMultimapMapView();
+	}
+	
+	private class ArrayListMultimapValueView extends AbstractList<V> {
+
+		private K key;
+		
+		public ArrayListMultimapValueView(K key) {
+			this.key = key;
+		}
+		
+		@Override
+		public int size() {
+			List<V> list = map.get(key);
+			if (list == null) return 0;
+			return list.size();
+		}
+		
+		@Override
+		public V get(int index) {
+			List<V> list = map.get(key);
+			if (list == null) throw new IndexOutOfBoundsException();
+			return list.get(index);
+		}
+		
+		@Override
+		public V set(int index, V value) {
+			List<V> list = map.get(key);
+			if (list == null) throw new IndexOutOfBoundsException();
+			return list.set(index, value);
+		}
+		
+		@Override
+		public void add(int index, V value) {
+			put(key, value);
+		}
+		
+		@Override
+		public V remove(int index) {
+			List<V> list = map.get(key);
+			if (list == null) throw new IndexOutOfBoundsException();
+			count--;
+			return list.remove(index);
+		}
+		
+		@Override
+		public void clear() {
+			List<V> list = map.get(key);
+			if (list != null) {
+				count -= list.size();
+				map.remove(key);
+			}
+		}
 	}
 
 	private class ArrayListMultimapMapView extends AbstractMap<K, List<V>> {
@@ -46,10 +98,10 @@ public class ArrayListMultimap<K, V> extends AbstractMultimap<K, V> {
 			return map.containsKey(key);
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<V> get(Object key) {
-			// TODO
-			return null;
+			return new ArrayListMultimapValueView((K)key);
 		}
 		
 		@Override
