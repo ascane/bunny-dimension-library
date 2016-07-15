@@ -20,5 +20,4 @@ public interface Multiset<T> extends Set<T> {
 		public T getElement();
 		public int getCount();
 	}
-	
 }

@@ -18,11 +18,11 @@ public class SetView<T> extends AbstractSet<T> {
 	}
 	
 	protected void addBehavior(T element) {
-		// To be overridden
+		// To be overridden.
 	}
 	
 	protected void removeBehavior(T element) {
-		// To be overridden
+		// To be overridden.
 	}
 
 	@Override
@@ -46,6 +46,14 @@ public class SetView<T> extends AbstractSet<T> {
 		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
 		addBehavior(element);
 		return original.add(element);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean remove(Object element) {
+		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
+		removeBehavior((T)element);
+		return original.remove(element);
 	}
 	
 	@Override

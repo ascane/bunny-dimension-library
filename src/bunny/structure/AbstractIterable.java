@@ -13,5 +13,4 @@ public abstract class AbstractIterable<T> implements Iterable<T> {
 			protected T nextValue(T last) {return nextValue(last);}
 		};
 	}
-
 }

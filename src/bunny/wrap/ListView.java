@@ -167,8 +167,4 @@ public class ListView<T> extends AbstractList<T> {
 		sizeFixed = true;
 		return this;
 	}
-	
 }
-
-
-

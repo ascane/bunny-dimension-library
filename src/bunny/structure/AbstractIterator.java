@@ -28,5 +28,4 @@ public abstract class AbstractIterator<T> implements Iterator<T> {
 			throw new NoSuchElementException();
 		}
 	}
-
 }

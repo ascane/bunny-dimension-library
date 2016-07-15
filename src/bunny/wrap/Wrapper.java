@@ -49,6 +49,17 @@ public class Wrapper<E, T> extends AbstractCollection<T> {
 		return original.add(mapBack.apply(element));
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean remove(Object element) {
+		if (readOnly) throw new UnsupportedOperationException("Wrapper is read-only!");
+		if (mapBack != null) {
+			return original.remove(mapBack.apply((T)element));
+		} else {
+			return super.remove(element);
+		}
+	}
+	
 	@Override
 	public Iterator<T> iterator() {
 		return new WrapperIterator(original.iterator());

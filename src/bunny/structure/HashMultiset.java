@@ -67,7 +67,5 @@ public class HashMultiset<T> extends AbstractMultiset<T> {
 		protected void removeBehavior(T element) {
 			count -= map.get(element);
 		}
-		
 	}
-	
 }

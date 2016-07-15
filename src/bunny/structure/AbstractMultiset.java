@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import bunny.wrap.SetWrapper;
 
-// You need to implement: size(), count(), setCount(), elementSet(), and clear() for performance.
+// The user needs to implement: size(), count(), setCount(), elementSet(), and clear() for performance.
 public abstract class AbstractMultiset<T> extends AbstractSet<T> implements Multiset<T> {
 
 	@SuppressWarnings("unchecked")

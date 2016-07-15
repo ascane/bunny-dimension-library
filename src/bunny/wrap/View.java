@@ -48,6 +48,14 @@ public class View<T> extends AbstractCollection<T> {
 		return original.add(element);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean remove(Object element) {
+		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
+		removeBehavior((T)element);
+		return original.remove(element);
+	}
+	
 	@Override
 	public Iterator<T> iterator() {
 		return new ViewIterator(original.iterator());
