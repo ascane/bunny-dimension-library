@@ -6,40 +6,40 @@ import java.util.Set;
 
 public interface Multimap<K, V> {
 	
-	int size();
+	public int size();
 	
-	boolean isEmpty();
+	public boolean isEmpty();
 	
-	boolean containsKey(Object key);
+	public boolean containsKey(Object key);
 	
-	boolean containsValue(Object value);
+	public boolean containsValue(Object value);
 	
-	boolean containsEntry(Object key, Object value);
+	public boolean containsEntry(Object key, Object value);
 	
-	boolean put(K key, V value);
+	public Collection<V> get(K key);
 	
-	boolean remove(Object key, Object value);
+	public boolean put(K key, V value);
 	
-	boolean putAll(K key, Iterable<? extends V> values);
+	public boolean remove(Object key, Object value);
 	
-	boolean putAll(Multimap<? extends K, ? extends V> multimap);
+	public boolean putAll(K key, Iterable<? extends V> values);
 	
-	Collection<V> replaceValues(K key, Iterable<? extends V> values);
+	public boolean putAll(Multimap<? extends K, ? extends V> multimap);
 	
-	Collection<V> removeAll(Object key);
+	public Collection<V> replaceValues(K key, Iterable<? extends V> values);
 	
-	void clear();
+	public Collection<V> removeAll(Object key);
 	
-	Collection<V> get(K key);
+	public void clear();
 	
-	Set<K> keySet();
+	public Set<K> keySet();
 	
-	Multiset<K> keys();
+	public Multiset<K> keys();
 	
-	Collection<V> values();
+	public Collection<V> values();
 	
-	Collection<Map.Entry<K, V>> entries();
+	public Collection<Map.Entry<K, V>> entries();
 	
-	Map<K, Collection<V>> asMap();
+	public Map<K, Collection<V>> asMap();
 	
 }
