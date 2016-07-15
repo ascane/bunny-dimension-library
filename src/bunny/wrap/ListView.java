@@ -81,6 +81,13 @@ public class ListView<T> extends AbstractList<T> {
 		return count;
 	}
 	@Override
+	public void clear() {
+		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
+		if (sizeFixed) throw new UnsupportedOperationException("This view has fixed size!");
+		if (!isOriginalStructure) throw new UnsupportedOperationException("This view has changed window and no longer support clear operation!");
+		original.clear();
+	}
+	@Override
 	public T get(int i) {
 		if (i < 0 || i >= count) throw new IndexOutOfBoundsException();
 		return original.get(index(i));

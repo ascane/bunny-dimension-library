@@ -31,6 +31,17 @@ public class SetView<T> extends AbstractSet<T> {
 	}
 	
 	@Override
+	public boolean contains(Object o) {
+		return original.contains(o);
+	}
+	
+	@Override
+	public void clear() {
+		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
+		original.clear();
+	}
+	
+	@Override
 	public boolean add(T element) {
 		if (readOnly) throw new UnsupportedOperationException("This view is read-only!");
 		addBehavior(element);

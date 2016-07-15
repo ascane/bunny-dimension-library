@@ -26,6 +26,21 @@ public class ListWrapper<E, T> extends AbstractList<T> {
 		return original.size();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean contains(Object o) {
+		if (mapBack != null) {
+			return original.contains(mapBack.apply((T)o));
+		} else {
+			return super.contains(o);
+		}
+	}
+	
+	@Override
+	public void clear() {
+		original.clear();
+	}
+	
 	@Override
 	public T get(int index) {
 		return map.apply(original.get(index));

@@ -21,15 +21,25 @@ public class Wrapper<E, T> extends AbstractCollection<T> {
 		map = mapFunction;
 		mapBack = mapBackFunction;
 	}
-	
-	@Override
-	public Iterator<T> iterator() {
-		return new WrapperIterator(original.iterator());
-	}
 
 	@Override
 	public int size() {
 		return original.size();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean contains(Object o) {
+		if (mapBack != null) {
+			return original.contains(mapBack.apply((T)o));
+		} else {
+			return super.contains(o);
+		}
+	}
+	
+	@Override
+	public void clear() {
+		original.clear();
 	}
 	
 	@Override
@@ -37,6 +47,11 @@ public class Wrapper<E, T> extends AbstractCollection<T> {
 		if (readOnly) throw new UnsupportedOperationException("Wrapper is read-only!");
 		if (mapBack == null) throw new UnsupportedOperationException("mapBack Function is not defined!");
 		return original.add(mapBack.apply(element));
+	}
+	
+	@Override
+	public Iterator<T> iterator() {
+		return new WrapperIterator(original.iterator());
 	}
 	
 	public Wrapper<E, T> readOnly() {
