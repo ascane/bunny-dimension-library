@@ -1,14 +1,19 @@
 package bunny.structure;
 
+import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 
 import bunny.wrap.SetView;
+import bunny.wrap.Wrapper;
 
 public class ListMultimap<K, V> implements Multimap<K, V> {
 
@@ -91,8 +96,13 @@ public class ListMultimap<K, V> implements Multimap<K, V> {
 
 	@Override
 	public boolean putAll(Multimap<? extends K, ? extends V> multimap) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean changed = false;
+		for (Entry<? extends K, ? extends V> entry : multimap.entries()) {
+			if (put(entry.getKey(), entry.getValue())) {
+				changed = true;
+			}
+		}
+		return changed;
 	}
 
 	@Override
@@ -135,12 +145,12 @@ public class ListMultimap<K, V> implements Multimap<K, V> {
 
 	@Override
 	public Collection<V> get(K key) {
-		return new KeyView(key);
+		return new ListMultimapValueListView(key);
 	}
 
 	@Override
 	public Set<K> keySet() {
-		return SetView.of(map.keySet()).readOnly();
+		return new ListMultisetKeySet();
 	}
 
 	@Override
@@ -151,14 +161,15 @@ public class ListMultimap<K, V> implements Multimap<K, V> {
 
 	@Override
 	public Collection<V> values() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Wrapper<Entry<K, V>, V>(entries(), new Function<Entry<K, V>, V>() {
+			@Override
+			public V apply(Entry<K, V> t) {return t.getValue();}
+		});
 	}
 
 	@Override
 	public Collection<Map.Entry<K, V>> entries() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ListMultimapEntryCollection();
 	}
 
 	@Override
@@ -167,13 +178,11 @@ public class ListMultimap<K, V> implements Multimap<K, V> {
 		return null;
 	}
 
-	
-	
-	private class KeyView extends AbstractList<V> {
+	private class ListMultimapValueListView extends AbstractList<V> {
 
 		private K key;
 		
-		public KeyView(K key) {
+		public ListMultimapValueListView(K key) {
 			this.key = key;
 		}
 		
@@ -222,4 +231,118 @@ public class ListMultimap<K, V> implements Multimap<K, V> {
 			return removed;
 		}
 	}
+	
+	private class ListMultimapEntry implements Entry<K, V> {
+		
+		private K key;
+		private int index;
+		
+		public ListMultimapEntry(K key, int index) {
+			this.key = key;
+			this.index = index;
+		}
+		
+		@Override
+		public K getKey() {
+			return key;
+		}
+
+		@Override
+		public V getValue() {
+			return map.get(key).get(index);
+		}
+
+		@Override
+		public V setValue(V value) {
+			V old = map.get(key).get(index);
+			map.get(key).set(index, value);
+			return old;
+		}
+		
+	}
+	
+	private class ListMultimapEntryCollection extends AbstractCollection<Entry<K, V>> {
+
+		@Override
+		public int size() {
+			return count;
+		}
+		
+		@Override
+		public Iterator<Entry<K, V>> iterator() {
+			return new ListMultimapEntrySetIterator();
+		}
+
+		private class ListMultimapEntrySetIterator implements Iterator<Entry<K, V>> {
+
+			private Iterator<Entry<K, ArrayList<V>>> entryIterator;
+			private K currentKey;
+			private ListMultimapEntry last;
+			private int currentCount = 0;
+			private int i = 0;
+			
+			public ListMultimapEntrySetIterator() {
+				entryIterator = map.entrySet().iterator();
+			}
+			
+			@Override
+			public boolean hasNext() {
+				return i < currentCount || entryIterator.hasNext();
+			}
+
+			@Override
+			public Entry<K, V> next() {
+				if (i < currentCount) {
+					last = new ListMultimapEntry(currentKey, i++);
+					return last;
+				}
+				if (entryIterator.hasNext()) {
+					Entry<K, ArrayList<V>> entry = entryIterator.next();
+					currentKey = entry.getKey();
+					currentCount = entry.getValue().size();
+					i = 1;
+					last = new ListMultimapEntry(currentKey, 0);
+					return last;
+				}
+				throw new NoSuchElementException();
+			}
+			
+			@Override
+			public void remove() {
+				if (last == null) throw new IllegalStateException();
+				ArrayList<V> list = map.get(last.getKey());
+				if (last.index == list.size() - 1) {
+					list.remove(last.index);
+				} else {
+					list.set(last.index, list.get(list.size() - 1));
+					list.remove(list.size() - 1);
+				}
+				if (list.size() == 0) {
+					map.remove(last.getKey());
+				}
+				i--;
+				currentCount--;
+				last = null;
+			}
+		}
+		
+	}
+	
+	private class ListMultisetKeySet extends SetView<K> {
+		
+		public ListMultisetKeySet() {
+			super(map.keySet());
+		}
+		
+		@Override
+		protected void addBehavior(K element) {
+			throw new UnsupportedOperationException("Cannot add element to Multiset's elementSet view!");
+		}
+		@Override
+		protected void removeBehavior(K element) {
+			count -= map.get(element).size();
+		}
+		
+	}
+
 }

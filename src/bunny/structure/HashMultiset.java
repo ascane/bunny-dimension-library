@@ -133,15 +133,11 @@ public class HashMultiset<T> extends AbstractSet<T> implements Multiset<T>{
 	}
 	@Override
 	public Set<Entry<T>> entrySet() {
-		return new HashMultisetEntrySet(new SetWrapper<Map.Entry<T, Integer>, Entry<T>>(map.entrySet(), 
-		new Function<Map.Entry<T, Integer>, Entry<T>>() {
-			@Override
-			public Entry<T> apply(Map.Entry<T, Integer> t) {return new HashMultisetEntry(t);}
-		}));
+		return new HashMultisetEntrySet();
 	}
 	@Override
 	public Set<T> elementSet() {
-		return new HashMultisetElementSet(map.keySet());
+		return new HashMultisetElementSet();
 	}
 	@Override
 	public Iterator<T> iterator() {
@@ -208,8 +204,11 @@ public class HashMultiset<T> extends AbstractSet<T> implements Multiset<T>{
 	
 	private class HashMultisetEntrySet extends SetView<Entry<T>> {
 
-		public HashMultisetEntrySet(Set<Entry<T>> original) {
-			super(original);
+		public HashMultisetEntrySet() {
+			super(new SetWrapper<Map.Entry<T, Integer>, Entry<T>>(map.entrySet(), new Function<Map.Entry<T, Integer>, Entry<T>>() {
+				@Override
+				public Entry<T> apply(Map.Entry<T, Integer> t) {return new HashMultisetEntry(t);}
+			}));
 		}
 		
 		@Override
@@ -225,8 +224,8 @@ public class HashMultiset<T> extends AbstractSet<T> implements Multiset<T>{
 	
 	private class HashMultisetElementSet extends SetView<T> {
 		
-		public HashMultisetElementSet(Set<T> original) {
-			super(original);
+		public HashMultisetElementSet() {
+			super(map.keySet());
 		}
 		
 		@Override
