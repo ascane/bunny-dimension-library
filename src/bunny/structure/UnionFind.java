@@ -2,18 +2,19 @@ package bunny.structure;
 
 import java.util.HashMap;
 
+// You can use UnionFind<T> with objects, or you can directly use UnionFind.Node and make the correspondence yourself.
 public class UnionFind<T> {
-	private HashMap<T, UnionFindNode> map;
+	private HashMap<T, Node> map;
 	
 	public UnionFind() {
-		map = new HashMap<T, UnionFindNode>();
+		map = new HashMap<T, Node>();
 	}
 	
 	public void MakeSet(T element) {
-		map.put(element, new UnionFindNode());
+		map.put(element, new Node());
 	}
 	
-	public UnionFindNode Find(T element) {
+	public Node Find(T element) {
 		return map.get(element).find();
 	}
 	
@@ -22,18 +23,18 @@ public class UnionFind<T> {
 	}
 	
 	
-	public static class UnionFindNode {
-		public UnionFindNode parent;
+	public static class Node {
+		public Node parent;
 		private int level;
 		
-		public UnionFindNode() {
+		public Node() {
 			this.parent = this;
 			level = 0;
 		}
 		
-		public UnionFindNode find() {
+		public Node find() {
 			if (parent != this) {
-				UnionFindNode root = parent.find();
+				Node root = parent.find();
 				this.parent = root;
 				return root;
 			} else {
@@ -41,9 +42,9 @@ public class UnionFind<T> {
 			}
 		}
 		
-		public void union(UnionFindNode other) {
-			UnionFindNode myRoot = find();
-			UnionFindNode yourRoot = other.find();
+		public void union(Node other) {
+			Node myRoot = find();
+			Node yourRoot = other.find();
 			if (myRoot.level > yourRoot.level) {
 				yourRoot.parent = myRoot;
 			} else if (yourRoot.level > myRoot.level) {
