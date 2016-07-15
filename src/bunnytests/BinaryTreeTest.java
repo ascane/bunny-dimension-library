@@ -1,4 +1,4 @@
-package javatests;
+package bunnytests;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package javatests;
+package bunnytests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
