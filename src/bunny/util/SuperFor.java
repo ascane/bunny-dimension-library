@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import bunny.structure.AbstractIterable;
 import bunny.wrap.ListView;
 
-public class SuperFor extends SimpleIterable<int[]> {
+public class SuperFor extends AbstractIterable<int[]> {
 
 	private int[] current;
 	private int[] realEds;

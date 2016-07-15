@@ -3,6 +3,7 @@ package bunny.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import bunny.structure.AbstractIterable;
 import bunny.structure.HashMultiset;
 import bunny.structure.Multiset;
 
@@ -59,7 +60,7 @@ public class Combinatorics {
 	
 	
 	
-	private static class CombinationIterable<T> extends SimpleIterable<List<T>> {
+	private static class CombinationIterable<T> extends AbstractIterable<List<T>> {
 
 		private List<T> list;
 		private List<T> output;
@@ -101,7 +102,7 @@ public class Combinatorics {
 		}
 	}
 	
-	private static class CombinationMultisetIterable<T> extends SimpleIterable<Multiset<T>> {
+	private static class CombinationMultisetIterable<T> extends AbstractIterable<Multiset<T>> {
 
 		private Multiset<T> set;
 		private ArrayList<T> setList;
@@ -154,7 +155,7 @@ public class Combinatorics {
 		}
 	}
 	
-	private static class FastFullPermutationIterable<T> extends SimpleIterable<List<T>> {
+	private static class FastFullPermutationIterable<T> extends AbstractIterable<List<T>> {
 
 		private List<T> list;
 		private int[] c;
