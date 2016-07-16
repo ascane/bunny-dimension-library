@@ -1,5 +1,7 @@
 package bunny.structure;
+
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Queue;
 
@@ -13,14 +15,10 @@ public class BinaryTree<T> {
 	
 	public BinaryTree(T value) {
 		this.value = value;
-		this.parent = null;
-		this.left = null;
-		this.right = null;
 	}
 	
 	public BinaryTree(T value, BinaryTree<T> left, BinaryTree<T> right) {
 		this.value = value;
-		this.parent = null;
 		if (left != null) {
 			this.left = left;
 			left.parent = this;
@@ -32,11 +30,11 @@ public class BinaryTree<T> {
 	}
 	
 	public boolean isLeaf() {
-		return this.left == null && this.right == null;
+		return left == null && right == null;
 	}
 	
 	public boolean isRoot() {
-		return this.parent == null;
+		return parent == null;
 	}
 	
 	public Iterator<BinaryTree<T>> getPreorderIterator() {
@@ -55,9 +53,34 @@ public class BinaryTree<T> {
 		return new BinaryTreeBFSIterator();
 	}
 	
+	public Tree<T> toTree() {
+		ArrayList<Tree<T>> children = new ArrayList<Tree<T>>(2); 
+		if (left != null) {
+			children.add(left.toTree());
+		}
+		if (right != null) {
+			children.add(right.toTree());
+		}
+		return new Tree<T>(value, children);
+	}
+	
+	public static <T> BinaryTree<T> from(Tree<T> tree) {
+		BinaryTree<T> left = null, right = null;
+		if (tree.children.size() > 2) {
+			throw new IllegalArgumentException("The tree is not a binary tree!");
+		}
+		if (tree.children.size() > 0) {
+			left = from(tree.children.get(0));
+		}
+		if (tree.children.size() > 1) {
+			right = from(tree.children.get(1));
+		}
+		return new BinaryTree<T>(tree.value, left, right);
+	}
+	
 	@Override
 	public String toString() {
-		if (this.isLeaf()) {
+		if (isLeaf()) {
 			return value.toString();
 		}
 		return String.format("%s(%s,%s)", 
@@ -73,14 +96,13 @@ public class BinaryTree<T> {
 		private BinaryTree<T> current;
 		
 		private IterateState state;
-		boolean finished;
+		boolean finished = false;
 		
 		public BinaryTreeXorderIterator(OrderType type) {
 			this.type = type;
 			this.root = BinaryTree.this;
 			this.current = root;
 			this.state = IterateState.FROM_PARENT;
-			this.finished = false;
 			if (type != OrderType.PREORDER) {
 				prepareForNext();
 			}
@@ -176,6 +198,5 @@ public class BinaryTree<T> {
 			}
 			return current;
 		}
-		
 	}
 }
