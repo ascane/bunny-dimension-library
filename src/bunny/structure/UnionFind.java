@@ -2,29 +2,37 @@ package bunny.structure;
 
 import java.util.HashMap;
 
-// You can use UnionFind<T> with objects, or you can directly use UnionFind.Node and make the correspondence yourself.
+/**
+ * The classical Union-find algorithm.
+ * 
+ * <p>Usage: Use UnionFind<T> with objects or directly use UnionFind.Node
+ * and make the correspondence.
+ */
 public class UnionFind<T> {
+	
 	private HashMap<T, Node> map;
 	
 	public UnionFind() {
 		map = new HashMap<T, Node>();
 	}
 	
-	public void MakeSet(T element) {
+	public void makeSet(T element) {
 		map.put(element, new Node());
 	}
 	
-	public Node Find(T element) {
+	public Node find(T element) {
 		return map.get(element).find();
 	}
 	
-	public void Union(T e1, T e2) {
+	public void union(T e1, T e2) {
 		map.get(e1).union(map.get(e2));
 	}
 	
 	
 	public static class Node {
+		
 		public Node parent;
+		
 		private int level;
 		
 		public Node() {
@@ -56,5 +64,3 @@ public class UnionFind<T> {
 		}
 	}
 }
-
-
