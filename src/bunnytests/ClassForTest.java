@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import bunny.code.CodeMerger;
-import bunny.data.Data;
-import bunny.data.Reader;
-import bunny.data.Writer;
+import bunny.io.Data;
+import bunny.io.Reader;
+import bunny.io.Writer;
 import bunny.structure.HashMultiset;
 import bunny.structure.Multiset;
 import bunny.structure.Multiset.Entry;

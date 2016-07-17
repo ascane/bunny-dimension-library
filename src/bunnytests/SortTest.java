@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import bunny.algo.Sort;
-import bunny.data.Data;
-import bunny.data.Writer;
+import bunny.io.Data;
+import bunny.io.Writer;
 import bunny.structure.BasicLinkedList;
 import bunny.util.Randomness;
 
