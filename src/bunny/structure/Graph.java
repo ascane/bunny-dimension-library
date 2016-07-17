@@ -8,6 +8,10 @@ public class Graph<V, E> {
 	
 	private ArrayList<Node<V, E>> nodes;
 	
+	public Graph() {
+		nodes = new ArrayList<Node<V, E>>();
+	}
+	
 	public ArrayList<Node<V, E>> getNodes() {
 		return nodes;
 	}
