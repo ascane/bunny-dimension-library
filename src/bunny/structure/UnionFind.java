@@ -16,15 +16,20 @@ public class UnionFind<T> {
 		map = new HashMap<T, Node>();
 	}
 	
-	public void makeSet(T element) {
-		map.put(element, new Node());
-	}
-	
 	public Node find(T element) {
+		if (!map.containsKey(element)) {
+			map.put(element, new Node());
+		}
 		return map.get(element).find();
 	}
 	
 	public void union(T e1, T e2) {
+		if (!map.containsKey(e1)) {
+			map.put(e1, new Node());
+		}
+		if (!map.containsKey(e2)) {
+			map.put(e2, new Node());
+		}
 		map.get(e1).union(map.get(e2));
 	}
 	
