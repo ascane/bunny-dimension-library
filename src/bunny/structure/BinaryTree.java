@@ -266,6 +266,11 @@ public class BinaryTree<T> {
 			return original.equals(((BinaryTreeAsTree<?>)o).original);
 		}
 		
+		@Override
+		public int hashCode() {
+			return original.hashCode();
+		}
+		
 		private class BinaryTreeAsTreeChildrenView extends AbstractList<Tree<T>> {
 
 			@Override
