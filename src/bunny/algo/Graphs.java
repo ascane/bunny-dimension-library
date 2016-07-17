@@ -1,14 +1,17 @@
 package bunny.algo;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 
 import bunny.structure.Graph;
@@ -19,9 +22,7 @@ import bunny.util.Ordering;
 
 public class Graphs {
 
-	/**
-	 * Returns the shortest directional path determined by Dijkstra's algorithm.
-	 */
+	/** Returns the shortest directional path determined by Dijkstra's algorithm. */
 	public static <V, E> List<Graph.Edge<V, E>> Dijkstra(
 			Graph<V, E> g, Graph.Node<V, E> src, Graph.Node<V, E> dest, Function<E, Long> length) {
 		// state: false = visiting, true = visited, does not containKey = unvisited.
@@ -95,7 +96,7 @@ public class Graphs {
 	}
 	
 	/**
-	 * Returns a minimum spanning tree determined by Kruskal's algorithm.
+	 * Returns a bi-directional minimum spanning tree determined by Kruskal's algorithm.
 	 * 
 	 * <p>If the graph is not connected, the returned graph will contain every minimum spanning tree.
 	 */
@@ -120,7 +121,7 @@ public class Graphs {
 		for (Graph.Edge<V, E> edge : edges) {
 			if (!uf.find(edge.from()).equals(uf.find(edge.to()))) {
 				uf.union(edge.from(), edge.to());
-				newGraph.createEdge(
+				newGraph.createBidirectionalEdge(
 						edge.getValue(),
 						newNodeByOldNode.get(edge.from()),
 						newNodeByOldNode.get(edge.to()));
@@ -145,19 +146,92 @@ public class Graphs {
 		// TODO(chiaman): Implement this.
 	}
 	
+	/** 
+	 * Returns the nodes that are connected to a specific node in the graph.
+	 * 
+	 * @throws IllegalArgumentException if the node is not in the graph
+	 */
+	public static <V, E> Set<Graph.Node<V, E>> getConnectedNodes(Graph<V, E> g, Graph.Node<V, E> node) {
+		if (!g.getNodes().contains(node)) {
+			throw new IllegalArgumentException("The node is not in the graph!");
+		}
+		Set<Graph.Node<V, E>> connectedNodes = new HashSet<>();
+		Queue<Graph.Node<V, E>> toCheck = new ArrayDeque<>();
+		toCheck.add(node);
+		while (!toCheck.isEmpty()) {
+			Graph.Node<V, E> currentNode = toCheck.poll();
+			for (Graph.Node<V, E> neighbor : currentNode.getOutboundEdges().keySet()) {
+				if (!connectedNodes.contains(neighbor)) {
+					connectedNodes.add(neighbor);
+					toCheck.add(neighbor);
+				}
+			}
+			for (Graph.Node<V, E> neighbor : currentNode.getInboundEdges().keySet()) {
+				if (!connectedNodes.contains(neighbor)) {
+					connectedNodes.add(neighbor);
+					toCheck.add(neighbor);
+				}
+			}
+		}
+		return connectedNodes;
+	}
+	
 	/**
-	 * Returns the connected component of the node in the graph if it exists, otherwise throws
-	 * {@link IllegalArgumentException}.
+	 * Returns the subgraph constructed by the {@code connectedNodes} in the graph.
+	 * 
+	 * <p>We assume that all the nodes in the {@code connectedNodes} are in the graph.
+	 * 
+	 * <p>Note: All the nodes in the returned graph are in the {@code connectedNodes}.
+	 */
+	public static <V, E> Graph<V, E> getSubgraph(Graph<V, E> g, Set<Graph.Node<V, E>> nodes) {
+		Graph<V, E> newGraph = new Graph<>();
+		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
+		for (Graph.Node<V, E> node : nodes) {
+			newNodeByOldNode.put(node, newGraph.createNode(node.getValue()));
+		}
+		for (Graph.Node<V, E> node : nodes) {
+			for (Graph.Edge<V, E> edge : node.getOutboundEdges().values()) {
+				if (g.getNodes().contains(edge.to())) {
+					newGraph.createEdge(
+							edge.getValue(),
+							newNodeByOldNode.get(edge.from()),
+							newNodeByOldNode.get(edge.to()));
+				}
+			}
+		}
+		return newGraph;
+	}
+	
+	/**
+	 * Returns the connected component of the node in the graph.
+	 * 
+	 * @throws IllegalArgumentException if the node is not in the graph
 	 */
 	public static <V, E> Graph<V, E> getConnectedComponent(Graph<V, E> g, Graph.Node<V, E> node) {
-		throw new UnsupportedOperationException();
-		// TODO(chiaman): Implement this.
+		return getSubgraph(g, getConnectedNodes(g, node));
+	}
+	
+	/** Returns a list of nodes of connected components. */
+	public static <V, E> List<Set<Graph.Node<V, E>>> getNodesInAllConnectedComponents(Graph<V, E> g) {
+		Set<Graph.Node<V, E>> explored = new HashSet<>();
+		List<Set<Graph.Node<V, E>>> result = new ArrayList<>();
+		for (Graph.Node<V, E> node : g.getNodes()) {
+			if (!explored.contains(node)) {
+				Set<Graph.Node<V, E>> connectedNodes = getConnectedNodes(g, node);
+				result.add(connectedNodes);
+				explored.addAll(connectedNodes);
+			}
+		}
+		return result;
 	}
 	
 	/** Returns a list of {@link Graph} instances of connected components. */
-	public static <V, E> List<Graph<V, E>> splitByConnectivity(Graph<V, E> g) {
-		throw new UnsupportedOperationException();
-		// TODO(chiaman): Implement this.
+	public static <V, E> List<Graph<V, E>> getAllConnectedComponents(Graph<V, E> g) {
+		List<Graph<V, E>> result = new ArrayList<>();
+		for (Set<Graph.Node<V, E>> nodes : getNodesInAllConnectedComponents(g)) {
+			result.add(getSubgraph(g, nodes));
+		}
+		return result;
 	}
 	
 	/**
