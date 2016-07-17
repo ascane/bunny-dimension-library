@@ -83,6 +83,18 @@ public class Graph<V, E> {
 		removeEdge(n2, n1);
 	}
 	
+	public Graph<V, E> clone() {
+		Graph<V, E> copy = new Graph<V, E>();
+		HashMap<Node<V, E>, Node<V, E>> map = new HashMap<Node<V, E>, Node<V, E>>();
+		for (Node<V, E> node : nodes) {
+			map.put(node, copy.createNode(node.value));
+		}
+		for (Edge<V, E> edge : edges) {
+			copy.createEdge(edge.value, map.get(edge.from), map.get(edge.to));
+		}
+		return copy;
+	}
+	
 	public static class Node<V, E> {
 		
 		private V value;
