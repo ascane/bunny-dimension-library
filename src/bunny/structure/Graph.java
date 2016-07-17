@@ -1,34 +1,48 @@
 package bunny.structure;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import bunny.wrap.SetView;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Graph<V, E> {
 	
-	private Set<Node<V, E>> nodes;
+	private ArrayList<Node<V, E>> nodes;
 	
-	public Set<Node<V, E>> getNodes() {
+	public ArrayList<Node<V, E>> getNodes() {
 		return nodes;
 	}
 	
-	public void createNode(V value) {
-		nodes.add(new Node<V, E>(value));
+	public Node<V, E> createNode(V value) {
+		Node<V, E> newNode = new Node<V, E>(value);
+		nodes.add(newNode);
+		return newNode;
 	}
 	
-	public Edge<V, E> getEdge(Node<V, E> from, Node<V, E> to) {
-		throw new UnsupportedOperationException();
-		// TODO(chiaman): Think of a better data structure.
+	public boolean removeNode(Node<V, E> node) {
+		return nodes.remove(node);
 	}
 	
+	/**
+	 * Returns the edge value from one node to another.
+	 * 
+	 * <p>The value may be null.
+	 */
+	public E getEdgeValue(Node<V, E> from, Node<V, E> to) {
+		return from.outBoundEdges.get(to);
+	}
+	
+	/**
+	 * Creates an edge if it does not already exist, otherwise update the edge value.
+	 */
 	public void createEdge(E value, Node<V, E> from, Node<V, E> to) {
-		Edge<V, E> newEdge = new Edge<V, E>(value, from, to);
-		if (!from.outBoundEdges.contains(newEdge)) {
-			from.outBoundEdges.add(newEdge);
-			to.inBoundEdges.add(newEdge);
+		if (!nodes.contains(from)) {
+			nodes.add(from);
 		}
+		if (!nodes.contains(to)) {
+			nodes.add(to);
+		}
+		from.getOutBoundEdges().put(to, value);
+		to.getInBoundEdges().put(from, value);
 	}
 	
 	public void createBidirectionalEdge(E value, Node<V, E> n1, Node<V, E> n2) {
@@ -36,77 +50,42 @@ public class Graph<V, E> {
 		createEdge(value, n2, n1);
 	}
 	
+	// Assume that both the from and to nodes exist.
 	public void removeEdge(Node<V, E> from, Node<V, E> to) {
-		
+		from.getOutBoundEdges().remove(to);
+		to.getInBoundEdges().remove(from);
 	}
 	
 	public void removeBidirectionalEdge(Node<V, E> n1, Node<V, E> n2) {
-		
+		removeEdge(n1, n2);
+		removeEdge(n2, n1);
 	}
 	
 	public static class Node<V, E> {
 		
 		private V value;
-		private Set<Edge<V, E>> inBoundEdges, outBoundEdges;
+		private Map<Node<V, E>, E> inBoundEdges, outBoundEdges; // From neighbor node to edge value.
 		
 		public Node(V value) {
 			this.value = value;
-			this.inBoundEdges = new HashSet<Edge<V, E>>(4);
-			this.outBoundEdges = new HashSet<Edge<V, E>>(4);
+			this.inBoundEdges = new HashMap<Node<V, E>, E>(4);
+			this.outBoundEdges = new HashMap<Node<V, E>, E>(4);
 		}
 		
 		public V getValue() {
 			return value;
 		}
 		
-		public Set<Edge<V, E>> getInBoundEdges() {
-			return new SetView<Edge<V, E>>(inBoundEdges).readOnly();
-		}
-		
-		public Set<Edge<V, E>> getOutBoundEdges() {
-			return new SetView<Edge<V, E>>(outBoundEdges).readOnly();
-		}
-	}
-	
-	public static class Edge<V, E> {
-		
-		private E value;
-		private Node<V, E> from, to;
-		
-		public Edge(E value, Node<V, E> from, Node<V, E> to) {
-			this.value = value;
-			this.from = from;
-			this.to = to;
-		}
-		
-		public E getValue() {
-			return value;
-		}
-		
-		public void setValue(E value) {
+		public void setValue(V value) {
 			this.value = value;
 		}
 		
-		public Node<V, E> from() {
-			return from;
+		public Map<Node<V, E>, E> getInBoundEdges() {
+			return inBoundEdges;
 		}
 		
-		public Node<V, E> to() {
-			return to;
-		}
-		
-		@Override
-		public boolean equals(Object o) {
-			if (!(o instanceof Edge<?, ?>)) {
-				return false;
-			}
-			Edge<?, ?> e = (Edge<?, ?>)o;
-			return from().equals(e.from()) && to().equals(e.to());
-		}
-		
-		@Override
-		public int hashCode() {
-			return Arrays.hashCode(new Object[]{from(), to()});
+		public Map<Node<V, E>, E> getOutBoundEdges() {
+			return outBoundEdges;
 		}
 	}
 }
