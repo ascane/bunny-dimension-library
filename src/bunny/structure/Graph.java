@@ -23,7 +23,17 @@ public class Graph<V, E> {
 	}
 	
 	public boolean removeNode(Node<V, E> node) {
+		for (Edge<V, E> edge : node.getInboundEdges().values()) {
+			removeEdge(edge.from, edge.to);
+		}
+		for (Edge<V, E> edge : node.getOutboundEdges().values()) {
+			removeEdge(edge.from, edge.to);
+		}
 		return nodes.remove(node);
+	}
+	
+	public boolean hasEdge(Node<V, E> from, Node<V, E> to) {
+		return getEdge(from, to) != null;
 	}
 	
 	/**
@@ -31,8 +41,8 @@ public class Graph<V, E> {
 	 * 
 	 * <p>The value may be null.
 	 */
-	public E getEdgeValue(Node<V, E> from, Node<V, E> to) {
-		return from.outBoundEdges.get(to);
+	public Edge<V, E> getEdge(Node<V, E> from, Node<V, E> to) {
+		return from.outboundEdges.get(to);
 	}
 	
 	/**
@@ -45,8 +55,9 @@ public class Graph<V, E> {
 		if (!nodes.contains(to)) {
 			nodes.add(to);
 		}
-		from.getOutBoundEdges().put(to, value);
-		to.getInBoundEdges().put(from, value);
+		Edge<V, E> edge = new Edge<V, E>(value, from, to);
+		from.getOutboundEdges().put(to, edge);
+		to.getInboundEdges().put(from, edge);
 	}
 	
 	public void createBidirectionalEdge(E value, Node<V, E> n1, Node<V, E> n2) {
@@ -54,10 +65,9 @@ public class Graph<V, E> {
 		createEdge(value, n2, n1);
 	}
 	
-	// Assume that both the from and to nodes exist.
 	public void removeEdge(Node<V, E> from, Node<V, E> to) {
-		from.getOutBoundEdges().remove(to);
-		to.getInBoundEdges().remove(from);
+		from.getOutboundEdges().remove(to);
+		to.getInboundEdges().remove(from);
 	}
 	
 	public void removeBidirectionalEdge(Node<V, E> n1, Node<V, E> n2) {
@@ -68,12 +78,12 @@ public class Graph<V, E> {
 	public static class Node<V, E> {
 		
 		private V value;
-		private Map<Node<V, E>, E> inBoundEdges, outBoundEdges; // From neighbor node to edge value.
+		private Map<Node<V, E>, Edge<V, E>> inboundEdges, outboundEdges; // From neighbor node to edge value.
 		
 		public Node(V value) {
 			this.value = value;
-			this.inBoundEdges = new HashMap<Node<V, E>, E>(4);
-			this.outBoundEdges = new HashMap<Node<V, E>, E>(4);
+			this.inboundEdges = new HashMap<Node<V, E>, Edge<V, E>>(4);
+			this.outboundEdges = new HashMap<Node<V, E>, Edge<V, E>>(4);
 		}
 		
 		public V getValue() {
@@ -84,12 +94,40 @@ public class Graph<V, E> {
 			this.value = value;
 		}
 		
-		public Map<Node<V, E>, E> getInBoundEdges() {
-			return inBoundEdges;
+		public Map<Node<V, E>, Edge<V, E>> getInboundEdges() {
+			return inboundEdges;
 		}
 		
-		public Map<Node<V, E>, E> getOutBoundEdges() {
-			return outBoundEdges;
+		public Map<Node<V, E>, Edge<V, E>> getOutboundEdges() {
+			return outboundEdges;
+		}
+	}
+	
+	public static class Edge<V, E> {
+		
+		private E value;
+		private Node<V, E> from, to;
+		
+		public Edge(E value, Node<V, E> from, Node<V, E> to) {
+			this.value = value;
+			this.from = from;
+			this.to = to;
+		}
+		
+		public E getValue() {
+			return value;
+		}
+		
+		public void setValue(E value) {
+			this.value = value;
+		}
+		
+		public Node<V, E> from() {
+			return from;
+		}
+		
+		public Node<V, E> to() {
+			return to;
 		}
 	}
 }
