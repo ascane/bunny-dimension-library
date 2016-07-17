@@ -3,9 +3,17 @@ package bunny.structure;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.function.Function;
+
+import bunny.structure.Graph.Node;
+import bunny.util.Functions;
 
 public class Tree<T> {
 	
@@ -81,6 +89,60 @@ public class Tree<T> {
 			childrenClone.add(child.clone());
 		}
 		return new Tree<T>(value, childrenClone);
+	}
+	
+	public <E> Graph<T, E> toDirectionalGraph() {
+		return toDirectionalGraph(Functions.<Tree<T>, E>constant(null));
+	}
+	public <E> Graph<T, E> toDirectionalGraph(Function<Tree<T>, E> parentEdgeValueFunction) {
+		Graph<T, E> graph = new Graph<>();
+		Map<Tree<T>, Graph.Node<T, E>> map = new HashMap<>();
+		Iterator<Tree<T>> it = getBFSIterator();
+		while (it.hasNext()) {
+			Tree<T> treeNode = it.next();
+			Graph.Node<T, E> graphNode = graph.createNode(value);
+			map.put(treeNode, graphNode);
+			if (!treeNode.isRoot()) {
+				E edgeValue = parentEdgeValueFunction.apply(treeNode);
+				graph.createEdge(edgeValue, map.get(treeNode.getParent()), graphNode);
+			}
+		}
+		return graph;
+	}
+	
+	public <E> Graph<T, E> toUndirectionalGraph() {
+		return toUndirectionalGraph(Functions.<Tree<T>, E>constant(null));
+	}
+	public <E> Graph<T, E> toUndirectionalGraph(Function<Tree<T>, E> parentEdgeValueFunction) {
+		Graph<T, E> graph = new Graph<>();
+		Map<Tree<T>, Graph.Node<T, E>> map = new HashMap<>();
+		Iterator<Tree<T>> it = getBFSIterator();
+		while (it.hasNext()) {
+			Tree<T> treeNode = it.next();
+			Graph.Node<T, E> graphNode = graph.createNode(value);
+			map.put(treeNode, graphNode);
+			if (!treeNode.isRoot()) {
+				E edgeValue = parentEdgeValueFunction.apply(treeNode);
+				graph.createBidirectionalEdge(edgeValue, graphNode, map.get(treeNode.getParent()));
+			}
+		}
+		return graph;
+	}
+	
+	public static <T, E> Tree<T> from(Graph<T, E> graph, Graph.Node<T, E> root) {
+		Set<Graph.Node<T, E>> visited = new HashSet<>();
+		return from(graph, root, visited);
+	}
+	
+	private static <T, E> Tree<T> from(Graph<T, E> graph, Graph.Node<T, E> root, Set<Graph.Node<T, E>> visited) {
+		visited.add(root);
+		Tree<T> tree = new Tree<T>(root.getValue());
+		for (Graph.Node<T, E> neighbor : root.getOutboundEdges().keySet()) {
+			if (!visited.contains(neighbor)) {
+				tree.getChildren().add(from(graph, neighbor, visited));
+			}
+		}
+		return tree;
 	}
 	
 	@Override
