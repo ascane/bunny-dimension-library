@@ -1,18 +1,21 @@
 package bunny.structure;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Graph<V, E> {
 	
-	private ArrayList<Node<V, E>> nodes;
+	private Set<Node<V, E>> nodes;
+	private Set<Edge<V, E>> edges;
 	
 	public Graph() {
-		nodes = new ArrayList<Node<V, E>>();
+		nodes = new HashSet<Node<V, E>>();
+		edges = new HashSet<Edge<V, E>>();
 	}
 	
-	public ArrayList<Node<V, E>> getNodes() {
+	public Set<Node<V, E>> getNodes() {
 		return nodes;
 	}
 	
@@ -58,6 +61,7 @@ public class Graph<V, E> {
 		Edge<V, E> edge = new Edge<V, E>(value, from, to);
 		from.getOutboundEdges().put(to, edge);
 		to.getInboundEdges().put(from, edge);
+		edges.add(edge);
 	}
 	
 	public void createBidirectionalEdge(E value, Node<V, E> n1, Node<V, E> n2) {
@@ -66,8 +70,12 @@ public class Graph<V, E> {
 	}
 	
 	public void removeEdge(Node<V, E> from, Node<V, E> to) {
-		from.getOutboundEdges().remove(to);
-		to.getInboundEdges().remove(from);
+		Edge<V, E> edge = getEdge(from, to);
+		if (edge != null) {
+			from.getOutboundEdges().remove(to);
+			to.getInboundEdges().remove(from);
+			edges.remove(edge);
+		}
 	}
 	
 	public void removeBidirectionalEdge(Node<V, E> n1, Node<V, E> n2) {
