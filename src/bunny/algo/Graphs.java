@@ -118,4 +118,29 @@ public class Graphs {
 		}
 		return newGraph;
 	}
+	
+	public static <V, E> boolean hasDirectionalCycle(Graph<V, E> g) {
+		throw new UnsupportedOperationException();
+		// TODO(chiaman): Implement this.
+	}
+	
+	public static <V, E> boolean hasUndirectionalCycle(Graph<V, E> g) {
+		throw new UnsupportedOperationException();
+		// TODO(chiaman): Implement this.
+	}
+	
+	public static <V, E> Graph<V, E> getConnectedComponent(Graph<V, E> g) {
+		throw new UnsupportedOperationException();
+		// TODO(chiaman): Implement this.
+	}
+	
+	public static <V, E> List<Graph<V, E>> splitByConnectivity(Graph<V, E> g) {
+		throw new UnsupportedOperationException();
+		// TODO(chiaman): Implement this.
+	}
+	
+	public static <V> Graph<V, Long> MaximumFlowFordFulkerson(Graph<V, Long> g) {
+		throw new UnsupportedOperationException();
+		// TODO(chiaman): Implement this.
+	}
 }
