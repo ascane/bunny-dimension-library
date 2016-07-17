@@ -134,7 +134,7 @@ public class Graph<V, E> {
 			for (Node<V, E> neighbor : current.getOutboundEdges().keySet()) {
 				if (!visited.contains(neighbor)) {
 					visited.add(neighbor);
-					toCheck.add(neighbor);
+					toCheck.addLast(neighbor);
 				}
 			}
 			return current;
