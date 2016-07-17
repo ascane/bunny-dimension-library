@@ -8,8 +8,8 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
-import bunny.io.Data;
 import bunny.structure.HashMultiset;
+import bunny.util.Data;
 import bunny.util.Primes;
 
 public class PrimesTest {
