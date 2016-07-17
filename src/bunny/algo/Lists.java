@@ -1,8 +1,10 @@
-package bunny.util;
+package bunny.algo;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import bunny.util.Ordering;
 
 public class Lists {
 	

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 
+import bunny.algo.Lists;
 import bunny.code.CodeMerger;
 import bunny.io.Data;
 import bunny.io.Reader;
@@ -18,7 +19,6 @@ import bunny.structure.Multiset.Entry;
 import bunny.structure.Vector;
 import bunny.util.Base;
 import bunny.util.Combinatorics;
-import bunny.util.Lists;
 import bunny.util.ModuloCalculation;
 import bunny.util.Ordering;
 import bunny.util.Primes;
