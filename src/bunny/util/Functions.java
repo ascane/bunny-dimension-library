@@ -11,10 +11,10 @@ public class Functions {
 		};
 	}
 	
-	public static <T> Function<T, T> constant(final T c) {
-		return new Function<T, T>() {
+	public static <T, V> Function<T, V> constant(final V c) {
+		return new Function<T, V>() {
 			@Override
-			public T apply(T t) {return c;}
+			public V apply(T t) {return c;}
 		};
 	}
 	
