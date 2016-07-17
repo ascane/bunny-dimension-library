@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
-import bunny.data.Data;
+import bunny.io.Data;
 import bunny.structure.HashMultiset;
 import bunny.util.Primes;
 

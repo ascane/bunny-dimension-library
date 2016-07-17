@@ -2,9 +2,9 @@ package bunny.code;
 
 import java.io.IOException;
 
-import bunny.data.Reader;
-import bunny.data.Writer;
-import bunny.data.ZipControl;
+import bunny.io.Reader;
+import bunny.io.Writer;
+import bunny.io.ZipControl;
 
 public class CodeTemplate {
 

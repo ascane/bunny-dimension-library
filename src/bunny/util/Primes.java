@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import bunny.algo.Lists;
 import bunny.structure.HashMultiset;
 import bunny.structure.Multiset;
 import bunny.wrap.ListView;

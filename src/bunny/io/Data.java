@@ -1,4 +1,4 @@
-package bunny.data;
+package bunny.io;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

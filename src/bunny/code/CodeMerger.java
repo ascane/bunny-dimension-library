@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bunny.data.Reader;
-import bunny.data.Writer;
+import bunny.io.Reader;
+import bunny.io.Writer;
 
 // Incomplete!
 public class CodeMerger {
