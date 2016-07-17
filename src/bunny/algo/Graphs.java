@@ -19,6 +19,9 @@ import bunny.util.Ordering;
 
 public class Graphs {
 
+	/**
+	 * Returns the shortest directional path determined by Dijkstra's algorithm.
+	 */
 	public static <V, E> List<Graph.Edge<V, E>> Dijkstra(
 			Graph<V, E> g, Graph.Node<V, E> src, Graph.Node<V, E> dest, Function<E, Long> length) {
 		// state: false = visiting, true = visited, does not containKey = unvisited.
@@ -49,7 +52,8 @@ public class Graphs {
 				if (state.containsKey(adjacentNode)) {
 					if (!state.get(adjacentNode)) {
 						// state = visiting
-						long newEstimatedDist = length.apply(adjacentEdge.getValue()) +  estimatedDist.get(currentNode);
+						long newEstimatedDist = 
+								length.apply(adjacentEdge.getValue()) +  estimatedDist.get(currentNode);
 						if (newEstimatedDist < estimatedDist.get(adjacentNode)) {
 							parent.put(adjacentNode, currentNode);
 							estimatedDist.put(adjacentNode, newEstimatedDist);
@@ -59,7 +63,9 @@ public class Graphs {
 					// state = unvisitied
 					state.put(adjacentNode, false);
 					parent.put(adjacentNode, currentNode);
-					estimatedDist.put(adjacentNode, length.apply(adjacentEdge.getValue()) +  estimatedDist.get(currentNode));
+					estimatedDist.put(
+							adjacentNode,
+							length.apply(adjacentEdge.getValue()) +  estimatedDist.get(currentNode));
 					toVisit.add(adjacentNode);
 				}
 			}
@@ -78,6 +84,11 @@ public class Graphs {
 		return result;
 	}
 	
+	/**
+	 * Returns a minimum spanning tree determined by Kruskal's algorithm by considering the edges' natural order.
+	 * 
+	 * <p>If the graph is not connected, the returned graph will contain every minimum spanning tree.
+	 */
 	public static <V, E extends Comparable<? super E>> Graph<V, E> mininumSpanningTreeKruskal(Graph<V, E> g) {
 		Comparator<? super E> c = Ordering.natural();
 		return minimumSpanningTreeKruskal(g, c);
@@ -109,7 +120,10 @@ public class Graphs {
 		for (Graph.Edge<V, E> edge : edges) {
 			if (!uf.find(edge.from()).equals(uf.find(edge.to()))) {
 				uf.union(edge.from(), edge.to());
-				newGraph.createEdge(edge.getValue(), newNodeByOldNode.get(edge.from()), newNodeByOldNode.get(edge.to()));
+				newGraph.createEdge(
+						edge.getValue(),
+						newNodeByOldNode.get(edge.from()),
+						newNodeByOldNode.get(edge.to()));
 				count++;
 			}
 			if (count == g.getNodes().size() - 1) {
@@ -119,27 +133,41 @@ public class Graphs {
 		return newGraph;
 	}
 	
+	/** Checks if the graph has at least one directional cycle. */
 	public static <V, E> boolean hasDirectionalCycle(Graph<V, E> g) {
 		throw new UnsupportedOperationException();
 		// TODO(chiaman): Implement this.
 	}
 	
+	/** Checks if the graph has at least one undirectional cycle. */
 	public static <V, E> boolean hasUndirectionalCycle(Graph<V, E> g) {
 		throw new UnsupportedOperationException();
 		// TODO(chiaman): Implement this.
 	}
 	
-	public static <V, E> Graph<V, E> getConnectedComponent(Graph<V, E> g) {
+	/**
+	 * Returns the connected component of the node in the graph if it exists, otherwise throws
+	 * {@link IllegalArgumentException}.
+	 */
+	public static <V, E> Graph<V, E> getConnectedComponent(Graph<V, E> g, Graph.Node<V, E> node) {
 		throw new UnsupportedOperationException();
 		// TODO(chiaman): Implement this.
 	}
 	
+	/** Returns a list of {@link Graph} instances of connected components. */
 	public static <V, E> List<Graph<V, E>> splitByConnectivity(Graph<V, E> g) {
 		throw new UnsupportedOperationException();
 		// TODO(chiaman): Implement this.
 	}
 	
-	public static <V> Graph<V, Long> MaximumFlowFordFulkerson(Graph<V, Long> g) {
+	/**
+	 * Returns the maximum flow graph from the src node to the dest node of the original graph
+	 * determined by Ford-Fulkerson's algorithm.
+	 * 
+	 * <p>The maximum flow can determined by the total flow from the src node in the returned graph.
+	 */
+	public static <V> Graph<V, Long> MaximumFlowFordFulkerson(
+			Graph<V, Long> g, Graph.Node<V, Long> src, Graph.Node<V, Long> dest) {
 		throw new UnsupportedOperationException();
 		// TODO(chiaman): Implement this.
 	}
