@@ -30,15 +30,14 @@ public class Graphs {
 		Map<Graph.Node<V, E>, Graph.Node<V, E>> parent = new HashMap<>();
 		// Estimated distance from the src node to a certain node.
 		final Map<Graph.Node<V, E>, Long> estimatedDist = new HashMap<>();
-		Queue<Graph.Node<V, E>> toVisit = new PriorityQueue<>(
-				new Comparator<Node<V, E>>() {
-					@Override
-					public int compare(Node<V, E> n1, Node<V, E> n2) {
-						return estimatedDist.get(n1).compareTo(estimatedDist.get(n2));
-					}
-				});
+		Queue<Graph.Node<V, E>> toVisit = new PriorityQueue<>(new Comparator<Node<V, E>>() {
+			@Override
+			public int compare(Node<V, E> n1, Node<V, E> n2) {
+				return estimatedDist.get(n1).compareTo(estimatedDist.get(n2));
+			}
+		});
 		state.put(src, false);
-		estimatedDist.put(src, (long) 0);
+		estimatedDist.put(src, 0L);
 		toVisit.add(src);
 		Graph.Node<V, E> currentNode = null;
 
@@ -146,6 +145,32 @@ public class Graphs {
 		// TODO(chiaman): Implement this.
 	}
 	
+	/**
+	 * Returns the subgraph constructed by the {@code connectedNodes} in the graph.
+	 * 
+	 * <p>We assume that all the nodes in the {@code connectedNodes} are in the graph.
+	 * 
+	 * <p>Note: All the nodes in the returned graph are in the {@code connectedNodes}.
+	 */
+	public static <V, E> Graph<V, E> getSubgraph(Graph<V, E> g, Set<Graph.Node<V, E>> nodes) {
+		Graph<V, E> newGraph = new Graph<>();
+		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
+		for (Graph.Node<V, E> node : nodes) {
+			newNodeByOldNode.put(node, newGraph.createNode(node.getValue()));
+		}
+		for (Graph.Node<V, E> node : nodes) {
+			for (Graph.Edge<V, E> edge : node.getOutboundEdges().values()) {
+				if (nodes.contains(edge.to())) {
+					newGraph.createEdge(
+							edge.getValue(),
+							newNodeByOldNode.get(edge.from()),
+							newNodeByOldNode.get(edge.to()));
+				}
+			}
+		}
+		return newGraph;
+	}
+	
 	/** 
 	 * Returns the nodes that are connected to a specific node in the graph.
 	 * 
@@ -174,32 +199,6 @@ public class Graphs {
 			}
 		}
 		return connectedNodes;
-	}
-	
-	/**
-	 * Returns the subgraph constructed by the {@code connectedNodes} in the graph.
-	 * 
-	 * <p>We assume that all the nodes in the {@code connectedNodes} are in the graph.
-	 * 
-	 * <p>Note: All the nodes in the returned graph are in the {@code connectedNodes}.
-	 */
-	public static <V, E> Graph<V, E> getSubgraph(Graph<V, E> g, Set<Graph.Node<V, E>> nodes) {
-		Graph<V, E> newGraph = new Graph<>();
-		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
-		for (Graph.Node<V, E> node : nodes) {
-			newNodeByOldNode.put(node, newGraph.createNode(node.getValue()));
-		}
-		for (Graph.Node<V, E> node : nodes) {
-			for (Graph.Edge<V, E> edge : node.getOutboundEdges().values()) {
-				if (g.getNodes().contains(edge.to())) {
-					newGraph.createEdge(
-							edge.getValue(),
-							newNodeByOldNode.get(edge.from()),
-							newNodeByOldNode.get(edge.to()));
-				}
-			}
-		}
-		return newGraph;
 	}
 	
 	/**
