@@ -14,6 +14,8 @@ import java.util.function.Function;
 import bunny.structure.Graph;
 import bunny.structure.Graph.Edge;
 import bunny.structure.Graph.Node;
+import bunny.structure.UnionFind;
+import bunny.util.Ordering;
 
 public class Graphs {
 
@@ -74,5 +76,46 @@ public class Graphs {
 		}
 		Collections.reverse(result);
 		return result;
+	}
+	
+	public static <V, E extends Comparable<? super E>> Graph<V, E> mininumSpanningTreeKruskal(Graph<V, E> g) {
+		Comparator<? super E> c = Ordering.natural();
+		return minimumSpanningTreeKruskal(g, c);
+	}
+	
+	/**
+	 * Returns a minimum spanning tree determined by Kruskal's algorithm.
+	 * 
+	 * <p>If the graph is not connected, the returned graph will contain every minimum spanning tree.
+	 */
+	public static <V, E> Graph<V, E> minimumSpanningTreeKruskal(Graph<V, E> g, final Comparator<? super E> c) {
+		Graph<V, E> newGraph = new Graph<>();
+		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
+		for (Graph.Node<V, E> node : g.getNodes()) {
+			newNodeByOldNode.put(node, newGraph.createNode(node.getValue()));
+		}
+		List<Graph.Edge<V, E>> edges = new ArrayList<>(g.getEdges());
+		
+		Comparator<? super Graph.Edge<V, E>> edgeComparator = new Comparator<Graph.Edge<V, E>>() {
+			@Override
+			public int compare(Edge<V, E> e1, Edge<V, E> e2) {
+				return c.compare(e1.getValue(), e2.getValue());
+			}
+		};
+		Collections.sort(edges, edgeComparator);
+		
+		UnionFind<Graph.Node<V, E>> uf = new UnionFind<>();
+		int count = 0;
+		for (Graph.Edge<V, E> edge : edges) {
+			if (!uf.find(edge.from()).equals(uf.find(edge.to()))) {
+				uf.union(edge.from(), edge.to());
+				newGraph.createEdge(edge.getValue(), newNodeByOldNode.get(edge.from()), newNodeByOldNode.get(edge.to()));
+				count++;
+			}
+			if (count == g.getNodes().size() - 1) {
+				break;
+			}
+		}
+		return newGraph;
 	}
 }
