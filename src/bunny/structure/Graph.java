@@ -1,8 +1,12 @@
 package bunny.structure;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class Graph<V, E> {
@@ -83,6 +87,14 @@ public class Graph<V, E> {
 		removeEdge(n2, n1);
 	}
 	
+	public Iterator<Node<V, E>> getDFSIterator(Node<V, E> startNode) {
+		return new GraphDFSIterator(startNode);
+	}
+	
+	public Iterator<Node<V, E>> getBFSIterator(Node<V, E> startNode) {
+		return new GraphBFSIterator(startNode);
+	}
+	
 	public Graph<V, E> clone() {
 		Graph<V, E> copy = new Graph<V, E>();
 		HashMap<Node<V, E>, Node<V, E>> map = new HashMap<Node<V, E>, Node<V, E>>();
@@ -93,6 +105,66 @@ public class Graph<V, E> {
 			copy.createEdge(edge.value, map.get(edge.from), map.get(edge.to));
 		}
 		return copy;
+	}
+	
+	private class GraphDFSIterator implements Iterator<Node<V, E>> {
+		
+		private Deque<Node<V, E>> toCheck;
+		private Set<Node<V, E>> visited;
+		
+		public GraphDFSIterator(Node<V, E> startNode) {
+			toCheck = new ArrayDeque<Node<V, E>>();
+			toCheck.addLast(startNode);
+			visited = new HashSet<Node<V, E>>();
+			visited.add(startNode);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !toCheck.isEmpty();
+		}
+
+		@Override
+		public Node<V, E> next() {
+			Node<V, E> current = toCheck.removeLast();
+			for (Node<V, E> neighbor : current.getOutboundEdges().keySet()) {
+				if (!visited.contains(neighbor)) {
+					visited.add(neighbor);
+					toCheck.add(neighbor);
+				}
+			}
+			return current;
+		}
+	}
+	
+	private class GraphBFSIterator implements Iterator<Node<V, E>> {
+		
+		private Queue<Node<V, E>> toCheck;
+		private Set<Node<V, E>> visited;
+		
+		public GraphBFSIterator(Node<V, E> startNode) {
+			toCheck = new ArrayDeque<Node<V, E>>();
+			toCheck.add(startNode);
+			visited = new HashSet<Node<V, E>>();
+			visited.add(startNode);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !toCheck.isEmpty();
+		}
+
+		@Override
+		public Node<V, E> next() {
+			Node<V, E> current = toCheck.remove();
+			for (Node<V, E> neighbor : current.getOutboundEdges().keySet()) {
+				if (!visited.contains(neighbor)) {
+					visited.add(neighbor);
+					toCheck.add(neighbor);
+				}
+			}
+			return current;
+		}
 	}
 	
 	public static class Node<V, E> {

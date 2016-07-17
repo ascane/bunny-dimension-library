@@ -166,7 +166,7 @@ public class Tree<T> {
 		private Queue<Tree<T>> toCheck;
 		
 		public TreeBFSIterator(Tree<T> root) {
-			toCheck = new ArrayDeque<>();
+			toCheck = new ArrayDeque<Tree<T>>();
 			toCheck.add(root);
 		}
 

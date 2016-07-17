@@ -216,7 +216,7 @@ public class BinaryTree<T> {
 		private Queue<BinaryTree<T>> toCheck;
 		
 		public BinaryTreeBFSIterator(BinaryTree<T> root) {
-			toCheck = new ArrayDeque<>();
+			toCheck = new ArrayDeque<BinaryTree<T>>();
 			toCheck.add(root);
 		}
 
