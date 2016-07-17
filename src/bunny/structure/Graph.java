@@ -23,6 +23,10 @@ public class Graph<V, E> {
 		return nodes;
 	}
 	
+	public Set<Edge<V, E>> getEdges() {
+		return edges;
+	}
+	
 	public Node<V, E> createNode(V value) {
 		Node<V, E> newNode = new Node<V, E>(value);
 		nodes.add(newNode);
