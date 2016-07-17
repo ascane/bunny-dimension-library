@@ -64,24 +64,32 @@ public class Tree<T> {
 	}
 	
 	public Iterator<Tree<T>> getPreorderIterator() {
-		return new TreeXorderIterator(OrderType.PREORDER);
+		return new TreeXorderIterator(OrderType.PREORDER, this);
 	}
 	
 	public Iterator<Tree<T>> getPostorderIterator() {
-		return new TreeXorderIterator(OrderType.POSTORDER);
+		return new TreeXorderIterator(OrderType.POSTORDER, this);
 	}
 	
 	public Iterator<Tree<T>> getBFSIterator() {
-		return new TreeBFSIterator();
+		return new TreeBFSIterator(this);
+	}
+	
+	public Tree<T> clone() {
+		ArrayList<Tree<T>> childrenClone = new ArrayList<Tree<T>>();
+		for (Tree<T> child : getChildren()) {
+			childrenClone.add(child.clone());
+		}
+		return new Tree<T>(value, childrenClone);
 	}
 	
 	@Override
 	public String toString() {
 		if (isLeaf()) {
-			return value.toString();
+			return getValue().toString();
 		}
 		StringBuilder str = new StringBuilder();
-		str.append(value + "(");
+		str.append(getValue() + "(");
 		List<Tree<T>> children = getChildren();
 		for (int i = 0; i < children.size() - 1; i++) {
 			str.append(children.get(i).toString() + ",");
@@ -100,9 +108,9 @@ public class Tree<T> {
 		private int level = 0;
 		private boolean finished = false;
 		
-		public TreeXorderIterator(OrderType type) {
+		public TreeXorderIterator(OrderType type, Tree<T> root) {
 			this.type = type;
-			this.root = Tree.this;
+			this.root = root;
 			this.current = root;
 			this.states = new ArrayList<Integer>();
 			this.states.add(0);
@@ -126,23 +134,26 @@ public class Tree<T> {
 		private void prepareForNext() {
 			while (true) {
 				int currentState = states.get(level);
-				if (currentState < current.children.size()) {
+				if (currentState < current.getChildren().size()) {
 					current = current.getChildren().get(currentState);
 					level++;
 					states.add(0);
 					if (type == OrderType.PREORDER) {
 						break;
 					}
+					if (type == OrderType.POSTORDER && current.getChildren().size() == 0) {
+						break;
+					}
 				} else {
-					current = current.getParent();
-					if (current == null) {
+					if (current.equals(root)) {
 						finished = true;
 						break;
 					}
+					current = current.getParent();
 					states.remove(level);
 					level--;
 					states.set(level, states.get(level) + 1);
-					if (type == OrderType.POSTORDER) {
+					if (type == OrderType.POSTORDER && states.get(level) == current.getChildren().size()) {
 						break;
 					}
 				}
@@ -154,9 +165,9 @@ public class Tree<T> {
 		
 		private Queue<Tree<T>> toCheck;
 		
-		public TreeBFSIterator() {
+		public TreeBFSIterator(Tree<T> root) {
 			toCheck = new ArrayDeque<>();
-			toCheck.add(Tree.this);
+			toCheck.add(root);
 		}
 
 		@Override

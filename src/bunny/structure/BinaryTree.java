@@ -65,19 +65,25 @@ public class BinaryTree<T> {
 	}
 	
 	public Iterator<BinaryTree<T>> getPreorderIterator() {
-		return new BinaryTreeXorderIterator(OrderType.PREORDER);
+		return new BinaryTreeXorderIterator(OrderType.PREORDER, this);
 	}
 	
 	public Iterator<BinaryTree<T>> getInorderIterator() {
-		return new BinaryTreeXorderIterator(OrderType.INORDER);
+		return new BinaryTreeXorderIterator(OrderType.INORDER, this);
 	}
 	
 	public Iterator<BinaryTree<T>> getPostorderIterator() {
-		return new BinaryTreeXorderIterator(OrderType.POSTORDER);
+		return new BinaryTreeXorderIterator(OrderType.POSTORDER, this);
 	}
 	
 	public Iterator<BinaryTree<T>> getBFSIterator() {
-		return new BinaryTreeBFSIterator();
+		return new BinaryTreeBFSIterator(this);
+	}
+	
+	public BinaryTree<T> clone() {
+		BinaryTree<T> leftClone = (getLeft() == null ? null : getLeft().clone());
+		BinaryTree<T> rightClone = (getRight() == null ? null : getRight().clone());
+		return new BinaryTree<T>(value, leftClone, rightClone);
 	}
 	
 	public Tree<T> toTree() {
@@ -130,9 +136,9 @@ public class BinaryTree<T> {
 		private IterateState state;
 		boolean finished = false;
 		
-		public BinaryTreeXorderIterator(OrderType type) {
+		public BinaryTreeXorderIterator(OrderType type, BinaryTree<T> root) {
 			this.type = type;
-			this.root = BinaryTree.this;
+			this.root = root;
 			this.current = root;
 			this.state = IterateState.FROM_PARENT;
 			if (type != OrderType.PREORDER) {
@@ -209,9 +215,9 @@ public class BinaryTree<T> {
 		
 		private Queue<BinaryTree<T>> toCheck;
 		
-		public BinaryTreeBFSIterator() {
+		public BinaryTreeBFSIterator(BinaryTree<T> root) {
 			toCheck = new ArrayDeque<>();
-			toCheck.add(BinaryTree.this);
+			toCheck.add(root);
 		}
 
 		@Override
@@ -238,6 +244,7 @@ public class BinaryTree<T> {
 		
 		public BinaryTreeAsTree(BinaryTree<T> original) {
 			super(original.getValue());
+			this.original = original;
 		}
 		@Override
 		public T getValue() {
@@ -249,6 +256,9 @@ public class BinaryTree<T> {
 		}
 		@Override
 		public Tree<T> getParent() {
+			if (original.getParent() == null) {
+				return null;
+			}
 			return new BinaryTreeAsTree<T>(original.getParent());
 		}
 		@Override

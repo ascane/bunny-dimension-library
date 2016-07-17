@@ -1,6 +1,8 @@
 package bunnytests;
+
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import bunny.structure.BinaryTree;
+import bunny.structure.Tree;
 
 public class BinaryTreeTest {
 	private static final BinaryTree<Integer> TREE = 
@@ -24,7 +27,7 @@ public class BinaryTreeTest {
 	
 	@Test
 	public void toString_success() {
-		assertEquals(TREE.toString(), "3(1(,4),2(6(5,),8))");
+		assertEquals("3(1(,4),2(6(5,),8))", TREE.toString());
 	}
 	
 	@Test
@@ -81,5 +84,30 @@ public class BinaryTreeTest {
 		}
 		List<Integer> expected = Arrays.asList(3, 1, 2, 4, 6, 8, 5);
 		assertEquals(expected, returned);
+	}
+	
+	@Test
+	public void toTree_success() {
+		assertEquals("3(1(4),2(6(5),8))", TREE.toTree().toString());
+	}
+	
+	@Test
+	public void asTree_success() {
+		BinaryTree<Integer> btree = TREE.clone();
+		Tree<Integer> tree = btree.asTree();
+		assertEquals(tree.toString(), "3(1(4),2(6(5),8))");
+		ArrayList<Tree<Integer>> nodes = new ArrayList<Tree<Integer>>();
+		for (Iterator<Tree<Integer>> it = tree.getPostorderIterator(); it.hasNext();) {
+			Tree<Integer> t = it.next();
+			t.setValue(2 * t.getValue());
+			if (t.getChildren().size() > 1) {
+				nodes.add(t);
+			}
+		}
+		for (Tree<Integer> node : nodes) {
+			node.getChildren().remove(0);
+		}
+		assertEquals("6(4(16))", tree.toString());
+		assertEquals("6(,4(,16))", btree.toString());
 	}
 }
