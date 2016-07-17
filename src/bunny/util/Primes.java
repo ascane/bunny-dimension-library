@@ -12,7 +12,7 @@ import bunny.wrap.ListView;
 
 public class Primes {
 	
-	private static ArrayList<Integer> primes = new ArrayList<Integer>(Arrays.asList(new Integer[]{2, 3}));
+	private static ArrayList<Integer> primes = new ArrayList<>(Arrays.asList(new Integer[]{2, 3}));
 	
 	public static int get(int i) {
 		updatePrimes(i + 1);
@@ -59,7 +59,7 @@ public class Primes {
 		return Collections.binarySearch(primes, number) >= 0;
 	}
 	public static Multiset<Integer> factorize(int number) {
-		Multiset<Integer> result = new HashMultiset<Integer>();
+		Multiset<Integer> result = new HashMultiset<>();
 		if (number <= 1) return result;
 		int remain = number;
 		int i = 0;

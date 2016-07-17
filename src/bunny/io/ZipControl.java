@@ -20,7 +20,7 @@ public class ZipControl {
 
 			byte data[] = new byte[BUFFER];
 
-			ArrayList<Path> paths = new ArrayList<Path>();
+			ArrayList<Path> paths = new ArrayList<>();
 			findAllSubPaths(Paths.get(dir), paths); 
 
 			for (Path path:paths) {

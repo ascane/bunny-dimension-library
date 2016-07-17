@@ -13,18 +13,18 @@ import bunny.structure.Tree;
 
 public class TreeTest {
 	private static final Tree<Integer> TREE = 
-			new Tree<Integer>(3, 
-					new Tree<Integer>(1,
-							new Tree<Integer>(4,
-									new Tree<Integer>(42)),
-							new Tree<Integer>(7)),
-					new Tree<Integer>(2,
-							new Tree<Integer>(8),
-							new Tree<Integer>(6,
-									new Tree<Integer>(5),
-									new Tree<Integer>(55),
-									new Tree<Integer>(555))),
-					new Tree<Integer>(0));
+			new Tree<>(3, 
+					new Tree<>(1,
+							new Tree<>(4,
+									new Tree<>(42)),
+							new Tree<>(7)),
+					new Tree<>(2,
+							new Tree<>(8),
+							new Tree<>(6,
+									new Tree<>(5),
+									new Tree<>(55),
+									new Tree<>(555))),
+					new Tree<>(0));
 	
 	@Test
 	public void toString_success() {

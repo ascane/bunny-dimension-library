@@ -15,15 +15,15 @@ import bunny.structure.Tree;
 
 public class BinaryTreeTest {
 	private static final BinaryTree<Integer> TREE = 
-			new BinaryTree<Integer>(3, 
-					new BinaryTree<Integer>(1,
+			new BinaryTree<>(3, 
+					new BinaryTree<>(1,
 							null,
-							new BinaryTree<Integer>(4)),
-					new BinaryTree<Integer>(2,
-							new BinaryTree<Integer>(6,
-									new BinaryTree<Integer>(5),
+							new BinaryTree<>(4)),
+					new BinaryTree<>(2,
+							new BinaryTree<>(6,
+									new BinaryTree<>(5),
 									null),
-							new BinaryTree<Integer>(8)));
+							new BinaryTree<>(8)));
 	
 	@Test
 	public void toString_success() {
@@ -96,7 +96,7 @@ public class BinaryTreeTest {
 		BinaryTree<Integer> btree = TREE.clone();
 		Tree<Integer> tree = btree.asTree();
 		assertEquals(tree.toString(), "3(1(4),2(6(5),8))");
-		ArrayList<Tree<Integer>> nodes = new ArrayList<Tree<Integer>>();
+		ArrayList<Tree<Integer>> nodes = new ArrayList<>();
 		for (Iterator<Tree<Integer>> it = tree.getPostorderIterator(); it.hasNext();) {
 			Tree<Integer> t = it.next();
 			t.setValue(2 * t.getValue());

@@ -12,10 +12,10 @@ public class HashMultiset<T> extends AbstractMultiset<T> {
 	private HashMap<T, Integer> map;
 	
 	public HashMultiset() {
-		map = new HashMap<T, Integer>();
+		map = new HashMap<>();
 	}
 	public HashMultiset(Collection<? extends T> elements) {
-		map = new HashMap<T, Integer>();
+		map = new HashMap<>();
 		addAll(elements);
 	}
 	

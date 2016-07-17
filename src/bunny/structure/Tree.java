@@ -17,13 +17,13 @@ public class Tree<T> {
 	
 	public Tree(T value) {
 		this.value = value;
-		this.children = new ArrayList<Tree<T>>(2);
+		this.children = new ArrayList<>(2);
 	}
 	
 	@SafeVarargs
 	public Tree(T value, Tree<T>... children) {
 		this.value = value;
-		this.children = new ArrayList<Tree<T>>(children.length);
+		this.children = new ArrayList<>(children.length);
 		for (Tree<T> child : children) {
 			this.children.add(child);
 			child.parent = this;
@@ -32,7 +32,7 @@ public class Tree<T> {
 	
 	public Tree(T value, Collection<Tree<T>> children) {
 		this.value = value;
-		this.children = new ArrayList<Tree<T>>(children.size());
+		this.children = new ArrayList<>(children.size());
 		for (Tree<T> child : children) {
 			this.children.add(child);
 			child.parent = this;
@@ -76,7 +76,7 @@ public class Tree<T> {
 	}
 	
 	public Tree<T> clone() {
-		ArrayList<Tree<T>> childrenClone = new ArrayList<Tree<T>>();
+		ArrayList<Tree<T>> childrenClone = new ArrayList<>();
 		for (Tree<T> child : getChildren()) {
 			childrenClone.add(child.clone());
 		}
@@ -112,7 +112,7 @@ public class Tree<T> {
 			this.type = type;
 			this.root = root;
 			this.current = root;
-			this.states = new ArrayList<Integer>();
+			this.states = new ArrayList<>();
 			this.states.add(0);
 			if (type == OrderType.POSTORDER) {
 				prepareForNext();
@@ -166,7 +166,7 @@ public class Tree<T> {
 		private Queue<Tree<T>> toCheck;
 		
 		public TreeBFSIterator(Tree<T> root) {
-			toCheck = new ArrayDeque<Tree<T>>();
+			toCheck = new ArrayDeque<>();
 			toCheck.add(root);
 		}
 

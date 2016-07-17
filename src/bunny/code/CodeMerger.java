@@ -34,9 +34,9 @@ public class CodeMerger {
 		Path path = Paths.get(mainJavaFilePath);
 		String outputName = path.getFileName().toString().split("\\.")[0] + ".txt";
 		StringBuilder content = new StringBuilder();
-		Set<String> javaImports = new HashSet<String>();
-		List<String> bunnyImports = new ArrayList<String>();
-		Set<String> bunnyImportsSet = new HashSet<String>();
+		Set<String> javaImports = new HashSet<>();
+		List<String> bunnyImports = new ArrayList<>();
+		Set<String> bunnyImportsSet = new HashSet<>();
 		int index = 0;
 		
 		addFile(mainJavaFilePath, content, javaImports, bunnyImports, bunnyImportsSet, true);
@@ -44,7 +44,7 @@ public class CodeMerger {
 			addFile(bunnyPath(bunnyImports.get(index)), content, javaImports, bunnyImports, bunnyImportsSet, false);
 			index++;
 		}
-		ArrayList<String> imports = new ArrayList<String>(javaImports);
+		ArrayList<String> imports = new ArrayList<>(javaImports);
 		Collections.sort(imports);
 		
 		try {

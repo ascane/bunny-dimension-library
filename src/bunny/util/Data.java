@@ -88,7 +88,7 @@ public class Data {
 	}
 	public static ArrayList<Integer> rangeList(int st, int ed, int step) {
 		if (step == 0) throw new IllegalArgumentException();
-		ArrayList<Integer> result = new ArrayList<Integer>();
+		ArrayList<Integer> result = new ArrayList<>();
 		if (step > 0) {
 			for (int i = st; i < ed; i += step) {
 				result.add(i);
@@ -139,22 +139,22 @@ public class Data {
 		return result;
 	}
 	public static ArrayList<Integer> toArrayList(int[] array) {
-		return new ArrayList<Integer>(new PrimitiveArrayView.IntArrayView(array));
+		return new ArrayList<>(new PrimitiveArrayView.IntArrayView(array));
 	}
 	public static ArrayList<Long> toArrayList(long[] array) {
-		return new ArrayList<Long>(new PrimitiveArrayView.LongArrayView(array));
+		return new ArrayList<>(new PrimitiveArrayView.LongArrayView(array));
 	}
 	public static ArrayList<Float> toArrayList(float[] array) {
-		return new ArrayList<Float>(new PrimitiveArrayView.FloatArrayView(array));
+		return new ArrayList<>(new PrimitiveArrayView.FloatArrayView(array));
 	}
 	public static ArrayList<Double> toArrayList(double[] array) {
-		return new ArrayList<Double>(new PrimitiveArrayView.DoubleArrayView(array));
+		return new ArrayList<>(new PrimitiveArrayView.DoubleArrayView(array));
 	}
 	public static ArrayList<Boolean> toArrayList(boolean[] array) {
-		return new ArrayList<Boolean>(new PrimitiveArrayView.BooleanArrayView(array));
+		return new ArrayList<>(new PrimitiveArrayView.BooleanArrayView(array));
 	}
 	public static ArrayList<Character> toArrayList(char[] array) {
-		return new ArrayList<Character>(new PrimitiveArrayView.CharArrayView(array));
+		return new ArrayList<>(new PrimitiveArrayView.CharArrayView(array));
 	}
 	
 	public static int[] toPrimitiveIntArray(Iterable<Integer> it) {
@@ -306,9 +306,9 @@ public class Data {
 		int length = list.size();
 		ArrayList<Object> result;
 		if (list.size() == 0 || !(list.get(0) instanceof List<?>)) {
-			result = new ArrayList<Object>(list);
+			result = new ArrayList<>(list);
 		} else {
-			result = new ArrayList<Object>();
+			result = new ArrayList<>();
 			for (int i = 0; i < length; i++) {
 				result.add(deepCloneList(list.get(i)));
 			}

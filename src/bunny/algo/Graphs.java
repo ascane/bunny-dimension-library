@@ -22,11 +22,11 @@ public class Graphs {
 	public static <V, E> List<Graph.Edge<V, E>> Dijkstra(
 			Graph<V, E> g, Graph.Node<V, E> src, Graph.Node<V, E> dest, Function<E, Long> length) {
 		// state: false = visiting, true = visited, does not containKey = unvisited.
-		Map<Graph.Node<V, E>, Boolean> state = new HashMap<Graph.Node<V, E>, Boolean>();
-		Map<Graph.Node<V, E>, Graph.Node<V, E>> parent = new HashMap<Graph.Node<V, E>, Graph.Node<V, E>>();
+		Map<Graph.Node<V, E>, Boolean> state = new HashMap<>();
+		Map<Graph.Node<V, E>, Graph.Node<V, E>> parent = new HashMap<>();
 		// Estimated distance from the src node to a certain node.
-		final Map<Graph.Node<V, E>, Long> estimatedDist = new HashMap<Graph.Node<V, E>, Long>();
-		Queue<Graph.Node<V, E>> toVisit = new PriorityQueue<Graph.Node<V, E>>(
+		final Map<Graph.Node<V, E>, Long> estimatedDist = new HashMap<>();
+		Queue<Graph.Node<V, E>> toVisit = new PriorityQueue<>(
 				new Comparator<Node<V, E>>() {
 					@Override
 					public int compare(Node<V, E> n1, Node<V, E> n2) {
@@ -69,7 +69,7 @@ public class Graphs {
 		if (!currentNode.equals(dest)) {
 			return null;
 		}
-		List<Graph.Edge<V, E>> result = new ArrayList<Graph.Edge<V, E>>();
+		List<Graph.Edge<V, E>> result = new ArrayList<>();
 		while (parent.containsKey(currentNode)) {
 			Graph.Node<V, E> parentNode = parent.get(currentNode);
 			result.add(g.getEdge(parentNode, currentNode));

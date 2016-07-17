@@ -14,7 +14,7 @@ public class ArrayListMultimap<K, V> extends AbstractMultimap<K, V> {
 	private HashMap<K, List<V>> map;
 	
 	public ArrayListMultimap() {
-		map = new HashMap<K, List<V>>();
+		map = new HashMap<>();
 	}
 
 	@Override

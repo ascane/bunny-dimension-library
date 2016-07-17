@@ -55,7 +55,7 @@ public class ClassForTest {
 			w.println(a);
 		}
 		w.println("-----------------------");
-		for (Multiset<Integer> a : Combinatorics.generateAllCombinations(new HashMultiset<Integer>(Data.asList(1,2,3,3,4,4)), 3)) {
+		for (Multiset<Integer> a : Combinatorics.generateAllCombinations(new HashMultiset<>(Data.asList(1,2,3,3,4,4)), 3)) {
 			w.println(a);
 		}
 	}
@@ -65,7 +65,7 @@ public class ClassForTest {
 			w.println(a);
 		}
 		int sum = 0;
-		HashSet<Integer> set = new HashSet<Integer>();
+		HashSet<Integer> set = new HashSet<>();
 		for (List<Integer> list : Combinatorics.generateAllFullPermutations(Data.rangeList(1, 10))) {
 			int[] a = Data.toPrimitiveIntArray(list);
 			int A = a[0] * 10 + a[1];
@@ -411,7 +411,7 @@ public class ClassForTest {
 	
 	public static void testHashMultiset() {
 		w.println("Testing HashMultiset...");
-		HashMultiset<Integer> ms = new HashMultiset<Integer>();
+		HashMultiset<Integer> ms = new HashMultiset<>();
 		w.println("size:" + ms.size());
 		ms.add(42);
 		w.println(ms, "size:" + ms.size());

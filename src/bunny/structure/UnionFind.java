@@ -13,7 +13,7 @@ public class UnionFind<T> {
 	private HashMap<T, Node> map;
 	
 	public UnionFind() {
-		map = new HashMap<T, Node>();
+		map = new HashMap<>();
 	}
 	
 	public Node find(T element) {

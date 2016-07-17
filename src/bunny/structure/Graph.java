@@ -15,8 +15,8 @@ public class Graph<V, E> {
 	private Set<Edge<V, E>> edges;
 	
 	public Graph() {
-		nodes = new HashSet<Node<V, E>>();
-		edges = new HashSet<Edge<V, E>>();
+		nodes = new HashSet<>();
+		edges = new HashSet<>();
 	}
 	
 	public Set<Node<V, E>> getNodes() {
@@ -28,7 +28,7 @@ public class Graph<V, E> {
 	}
 	
 	public Node<V, E> createNode(V value) {
-		Node<V, E> newNode = new Node<V, E>(value);
+		Node<V, E> newNode = new Node<>(value);
 		nodes.add(newNode);
 		return newNode;
 	}
@@ -66,7 +66,7 @@ public class Graph<V, E> {
 		if (!nodes.contains(to)) {
 			nodes.add(to);
 		}
-		Edge<V, E> edge = new Edge<V, E>(value, from, to);
+		Edge<V, E> edge = new Edge<>(value, from, to);
 		from.getOutboundEdges().put(to, edge);
 		to.getInboundEdges().put(from, edge);
 		edges.add(edge);
@@ -100,8 +100,8 @@ public class Graph<V, E> {
 	}
 	
 	public Graph<V, E> clone() {
-		Graph<V, E> copy = new Graph<V, E>();
-		HashMap<Node<V, E>, Node<V, E>> map = new HashMap<Node<V, E>, Node<V, E>>();
+		Graph<V, E> copy = new Graph<>();
+		HashMap<Node<V, E>, Node<V, E>> map = new HashMap<>();
 		for (Node<V, E> node : nodes) {
 			map.put(node, copy.createNode(node.value));
 		}
@@ -117,9 +117,9 @@ public class Graph<V, E> {
 		private Set<Node<V, E>> visited;
 		
 		public GraphDFSIterator(Node<V, E> startNode) {
-			toCheck = new ArrayDeque<Node<V, E>>();
+			toCheck = new ArrayDeque<>();
 			toCheck.addLast(startNode);
-			visited = new HashSet<Node<V, E>>();
+			visited = new HashSet<>();
 			visited.add(startNode);
 		}
 
@@ -147,9 +147,9 @@ public class Graph<V, E> {
 		private Set<Node<V, E>> visited;
 		
 		public GraphBFSIterator(Node<V, E> startNode) {
-			toCheck = new ArrayDeque<Node<V, E>>();
+			toCheck = new ArrayDeque<>();
 			toCheck.add(startNode);
-			visited = new HashSet<Node<V, E>>();
+			visited = new HashSet<>();
 			visited.add(startNode);
 		}
 
@@ -178,8 +178,8 @@ public class Graph<V, E> {
 		
 		public Node(V value) {
 			this.value = value;
-			this.inboundEdges = new HashMap<Node<V, E>, Edge<V, E>>(4);
-			this.outboundEdges = new HashMap<Node<V, E>, Edge<V, E>>(4);
+			this.inboundEdges = new HashMap<>(4);
+			this.outboundEdges = new HashMap<>(4);
 		}
 		
 		public V getValue() {

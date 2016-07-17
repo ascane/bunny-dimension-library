@@ -87,7 +87,7 @@ public class BinaryTree<T> {
 	}
 	
 	public Tree<T> toTree() {
-		ArrayList<Tree<T>> children = new ArrayList<Tree<T>>(2); 
+		ArrayList<Tree<T>> children = new ArrayList<>(2); 
 		if (getLeft() != null) {
 			children.add(getLeft().toTree());
 		}
@@ -216,7 +216,7 @@ public class BinaryTree<T> {
 		private Queue<BinaryTree<T>> toCheck;
 		
 		public BinaryTreeBFSIterator(BinaryTree<T> root) {
-			toCheck = new ArrayDeque<BinaryTree<T>>();
+			toCheck = new ArrayDeque<>();
 			toCheck.add(root);
 		}
 

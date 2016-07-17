@@ -22,25 +22,25 @@ public class ListView<T> extends AbstractList<T> {
 	}
 	@SafeVarargs
 	public static <T> ListView<T> of(T... array) {
-		return new ListView<T>(Arrays.asList(array));
+		return new ListView<>(Arrays.asList(array));
 	}
 	public static ListView<Integer> of(int[] array) {
-		return new ListView<Integer>(new PrimitiveArrayView.IntArrayView(array));
+		return new ListView<>(new PrimitiveArrayView.IntArrayView(array));
 	}
 	public static ListView<Long> of(long[] array) {
-		return new ListView<Long>(new PrimitiveArrayView.LongArrayView(array));
+		return new ListView<>(new PrimitiveArrayView.LongArrayView(array));
 	}
 	public static ListView<Float> of(float[] array) {
-		return new ListView<Float>(new PrimitiveArrayView.FloatArrayView(array));
+		return new ListView<>(new PrimitiveArrayView.FloatArrayView(array));
 	}
 	public static ListView<Double> of(double[] array) {
-		return new ListView<Double>(new PrimitiveArrayView.DoubleArrayView(array));
+		return new ListView<>(new PrimitiveArrayView.DoubleArrayView(array));
 	}
 	public static ListView<Boolean> of(boolean[] array) {
-		return new ListView<Boolean>(new PrimitiveArrayView.BooleanArrayView(array));
+		return new ListView<>(new PrimitiveArrayView.BooleanArrayView(array));
 	}
 	public static ListView<Character> of(char[] array) {
-		return new ListView<Character>(new PrimitiveArrayView.CharArrayView(array));
+		return new ListView<>(new PrimitiveArrayView.CharArrayView(array));
 	}
 	
 	public ListView(List<T> list) {

@@ -103,11 +103,11 @@ public class SuperFor extends AbstractIterable<int[]> {
 	
 	
 	private SuperFor() {
-		eds = new ArrayList<Integer>();
-		edFuncs = new ArrayList<Function<List<Integer>, Integer>>();
-		sts = new ArrayList<Integer>();
-		stFuncs = new ArrayList<Function<List<Integer>, Integer>>();
-		steps = new ArrayList<Integer>();
+		eds = new ArrayList<>();
+		edFuncs = new ArrayList<>();
+		sts = new ArrayList<>();
+		stFuncs = new ArrayList<>();
+		steps = new ArrayList<>();
 	}
 	
 	public SuperFor addForBlock(int range) {
