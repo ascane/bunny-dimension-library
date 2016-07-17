@@ -4,15 +4,16 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Queue;
 
 public class Tree<T> {
 	
 	private enum OrderType {PREORDER, POSTORDER};
 	
-	public T value;
-	public Tree<T> parent;
-	public ArrayList<Tree<T>> children;
+	private T value;
+	private Tree<T> parent;
+	private ArrayList<Tree<T>> children;
 	
 	public Tree(T value) {
 		this.value = value;
@@ -38,12 +39,28 @@ public class Tree<T> {
 		}
 	}
 	
+	public T getValue() {
+		return value;
+	}
+	public void setValue(T value) {
+		this.value = value;
+	}
+	public Tree<T> getParent() {
+		return parent;
+	}
+	public void setParent(Tree<T> parent) {
+		this.parent = parent;
+	}
+	public List<Tree<T>> getChildren() {
+		return children;
+	}
+	
 	public boolean isLeaf() {
-		return children.size() == 0;
+		return getChildren().size() == 0;
 	}
 	
 	public boolean isRoot() {
-		return parent == null;
+		return getParent() == null;
 	}
 	
 	public Iterator<Tree<T>> getPreorderIterator() {
@@ -65,6 +82,7 @@ public class Tree<T> {
 		}
 		StringBuilder str = new StringBuilder();
 		str.append(value + "(");
+		List<Tree<T>> children = getChildren();
 		for (int i = 0; i < children.size() - 1; i++) {
 			str.append(children.get(i).toString() + ",");
 		}
@@ -109,14 +127,14 @@ public class Tree<T> {
 			while (true) {
 				int currentState = states.get(level);
 				if (currentState < current.children.size()) {
-					current = current.children.get(currentState);
+					current = current.getChildren().get(currentState);
 					level++;
 					states.add(0);
 					if (type == OrderType.PREORDER) {
 						break;
 					}
 				} else {
-					current = current.parent;
+					current = current.getParent();
 					if (current == null) {
 						finished = true;
 						break;
@@ -149,7 +167,7 @@ public class Tree<T> {
 		@Override
 		public Tree<T> next() {
 			Tree<T> current = toCheck.remove();
-			toCheck.addAll(current.children);
+			toCheck.addAll(current.getChildren());
 			return current;
 		}
 	}

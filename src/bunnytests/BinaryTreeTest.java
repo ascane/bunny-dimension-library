@@ -32,7 +32,7 @@ public class BinaryTreeTest {
 		List<Integer> returned = new LinkedList<>();
 		int count = 0;
 		for (Iterator<BinaryTree<Integer>> it = TREE.getPreorderIterator(); it.hasNext(); count++) {
-			returned.add(it.next().value);
+			returned.add(it.next().getValue());
 			if (count > 100) {
 				break;
 			}
@@ -46,7 +46,7 @@ public class BinaryTreeTest {
 		List<Integer> returned = new LinkedList<>();
 		int count = 0;
 		for (Iterator<BinaryTree<Integer>> it = TREE.getInorderIterator(); it.hasNext(); count++) {
-			returned.add(it.next().value);
+			returned.add(it.next().getValue());
 			if (count > 100) {
 				break;
 			}
@@ -60,7 +60,7 @@ public class BinaryTreeTest {
 		List<Integer> returned = new LinkedList<>();
 		int count = 0;
 		for (Iterator<BinaryTree<Integer>> it = TREE.getPostorderIterator(); it.hasNext(); count++) {
-			returned.add(it.next().value);
+			returned.add(it.next().getValue());
 			if (count > 100) {
 				break;
 			}
@@ -74,7 +74,7 @@ public class BinaryTreeTest {
 		List<Integer> returned = new LinkedList<>();
 		int count = 0;
 		for (Iterator<BinaryTree<Integer>> it = TREE.getBFSIterator(); it.hasNext(); count++) {
-			returned.add(it.next().value);
+			returned.add(it.next().getValue());
 			if (count > 100) {
 				break;
 			}

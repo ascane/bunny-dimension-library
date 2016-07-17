@@ -1,8 +1,10 @@
 package bunny.structure;
 
+import java.util.AbstractList;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Queue;
 
 public class BinaryTree<T> {
@@ -10,8 +12,8 @@ public class BinaryTree<T> {
 	private enum IterateState {FROM_PARENT, FROM_LEFT, FROM_RIGHT;};
 	private enum OrderType {PREORDER, INORDER, POSTORDER};
 	
-	public T value;
-	public BinaryTree<T> parent, left, right;
+	private T value;
+	private BinaryTree<T> parent, left, right;
 	
 	public BinaryTree(T value) {
 		this.value = value;
@@ -29,12 +31,37 @@ public class BinaryTree<T> {
 		}
 	}
 	
+	public T getValue() {
+		return value;
+	}
+	public void setValue(T value) {
+		this.value = value;
+	}
+	public BinaryTree<T> getParent() {
+		return parent;
+	}
+	public void setParent(BinaryTree<T> parent) {
+		this.parent = parent;
+	}
+	public BinaryTree<T> getLeft() {
+		return left;
+	}
+	public void setLeft(BinaryTree<T> left) {
+		this.left = left;
+	}
+	public BinaryTree<T> getRight() {
+		return right;
+	}
+	public void setRight(BinaryTree<T> right) {
+		this.right = right;
+	}
+	
 	public boolean isLeaf() {
-		return left == null && right == null;
+		return getLeft() == null && getRight() == null;
 	}
 	
 	public boolean isRoot() {
-		return parent == null;
+		return getParent() == null;
 	}
 	
 	public Iterator<BinaryTree<T>> getPreorderIterator() {
@@ -55,27 +82,32 @@ public class BinaryTree<T> {
 	
 	public Tree<T> toTree() {
 		ArrayList<Tree<T>> children = new ArrayList<Tree<T>>(2); 
-		if (left != null) {
-			children.add(left.toTree());
+		if (getLeft() != null) {
+			children.add(getLeft().toTree());
 		}
-		if (right != null) {
-			children.add(right.toTree());
+		if (getRight() != null) {
+			children.add(getRight().toTree());
 		}
 		return new Tree<T>(value, children);
 	}
 	
+	public Tree<T> asTree() {
+		return new BinaryTreeAsTree<T>(this);
+	}
+	
 	public static <T> BinaryTree<T> from(Tree<T> tree) {
 		BinaryTree<T> left = null, right = null;
-		if (tree.children.size() > 2) {
+		List<Tree<T>> children = tree.getChildren();
+		if (children.size() > 2) {
 			throw new IllegalArgumentException("The tree is not a binary tree!");
 		}
-		if (tree.children.size() > 0) {
-			left = from(tree.children.get(0));
+		if (children.size() > 0) {
+			left = from(children.get(0));
 		}
-		if (tree.children.size() > 1) {
-			right = from(tree.children.get(1));
+		if (tree.getChildren().size() > 1) {
+			right = from(children.get(1));
 		}
-		return new BinaryTree<T>(tree.value, left, right);
+		return new BinaryTree<T>(tree.getValue(), left, right);
 	}
 	
 	@Override
@@ -85,8 +117,8 @@ public class BinaryTree<T> {
 		}
 		return String.format("%s(%s,%s)", 
 				value.toString(),
-				left == null ? "" : left.toString(),
-				right == null ? "" : right.toString());
+				getLeft() == null ? "" : getLeft().toString(),
+				getRight() == null ? "" : getRight().toString());
 	}
 	
 	private class BinaryTreeXorderIterator implements Iterator<BinaryTree<T>> {
@@ -123,8 +155,8 @@ public class BinaryTree<T> {
 		private void prepareForNext() {
 			while (true) {
 				if (state == IterateState.FROM_PARENT) {
-					if (current.left != null) {
-						current = current.left;
+					if (current.getLeft() != null) {
+						current = current.getLeft();
 						if (type == OrderType.PREORDER) {
 							break;
 						}
@@ -136,8 +168,8 @@ public class BinaryTree<T> {
 					}
 				}
 				if (state == IterateState.FROM_LEFT) {
-					if (current.right != null) {
-						current = current.right;
+					if (current.getRight() != null) {
+						current = current.getRight();
 						state = IterateState.FROM_PARENT;
 						if (type == OrderType.PREORDER) {
 							break;
@@ -155,8 +187,8 @@ public class BinaryTree<T> {
 						break;
 					} else {
 						BinaryTree<T> last = current;
-						current = current.parent;
-						if (current.left == last) {
+						current = current.getParent();
+						if (current.getLeft() == last) {
 							state = IterateState.FROM_LEFT;
 							if (type == OrderType.INORDER) {
 								break;
@@ -191,12 +223,105 @@ public class BinaryTree<T> {
 		public BinaryTree<T> next() {
 			BinaryTree<T> current = toCheck.remove();
 			if (current.left != null) {
-				toCheck.add(current.left);
+				toCheck.add(current.getLeft());
 			}
 			if (current.right != null) {
-				toCheck.add(current.right);
+				toCheck.add(current.getRight());
 			}
 			return current;
+		}
+	}
+	
+	private static class BinaryTreeAsTree<T> extends Tree<T> {
+
+		private BinaryTree<T> original;
+		
+		public BinaryTreeAsTree(BinaryTree<T> original) {
+			super(original.getValue());
+		}
+		@Override
+		public T getValue() {
+			return original.getValue();
+		}
+		@Override
+		public void setValue(T value) {
+			original.setValue(value);
+		}
+		@Override
+		public Tree<T> getParent() {
+			return new BinaryTreeAsTree<T>(original.getParent());
+		}
+		@Override
+		public void setParent(Tree<T> parent) {
+			throw new UnsupportedOperationException("Tree view of a binary tree cannot change structure.");
+		}
+		@Override
+		public List<Tree<T>> getChildren() {
+			return new BinaryTreeAsTreeChildrenView();
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (!(o instanceof BinaryTreeAsTree<?>)) return false;
+			return original.equals(((BinaryTreeAsTree<?>)o).original);
+		}
+		
+		private class BinaryTreeAsTreeChildrenView extends AbstractList<Tree<T>> {
+
+			@Override
+			public int size() {
+				int size = 0;
+				if (original.getLeft() != null) size++;
+				if (original.getRight() != null) size++;
+				return size;
+			}
+			
+			@Override
+			public Tree<T> get(int index) {
+				if (index == 0) {
+					if (original.getLeft() != null) {
+						return new BinaryTreeAsTree<T>(original.getLeft());
+					} else if (original.getRight() != null) {
+						return new BinaryTreeAsTree<T>(original.getRight());
+					}
+				}
+				if (index == 1) {
+					if (original.getLeft() != null && original.getRight() != null) {
+						return new BinaryTreeAsTree<T>(original.getRight());
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+			
+			@Override
+			public Tree<T> remove(int index) {
+				Tree<T> temp;
+				if (index == 0) {
+					if (original.getLeft() != null) {
+						temp = new BinaryTreeAsTree<T>(original.getLeft());
+						original.setLeft(null);
+						return temp;
+					} else if (original.getRight() != null) {
+						temp = new BinaryTreeAsTree<T>(original.getRight());
+						original.setRight(null);
+						return temp;
+					}
+				}
+				if (index == 1) {
+					if (original.getLeft() != null && original.getRight() != null) {
+						temp = new BinaryTreeAsTree<T>(original.getRight());
+						original.setRight(null);
+						return temp;
+					}
+				}
+				throw new IndexOutOfBoundsException();
+			}
+			
+			@Override
+			public void clear() {
+				original.setLeft(null);
+				original.setRight(null);
+			}
 		}
 	}
 }
