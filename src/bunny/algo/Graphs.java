@@ -23,7 +23,7 @@ import bunny.util.Ordering;
 public class Graphs {
 
 	/** Returns the shortest directional path determined by Dijkstra's algorithm. */
-	public static <V, E> List<Graph.Edge<V, E>> Dijkstra(
+	public static <V, E> List<Graph.Edge<V, E>> shortestPathDijkstra(
 			Graph<V, E> g, Graph.Node<V, E> src, Graph.Node<V, E> dest, Function<E, Long> length) {
 		// state: false = visiting, true = visited, does not containKey = unvisited.
 		Map<Graph.Node<V, E>, Boolean> state = new HashMap<>();
@@ -49,6 +49,7 @@ public class Graphs {
 			for (Entry<Node<V, E>, Edge<V, E>> entry : currentNode.getOutboundEdges().entrySet()) {
 				Graph.Node<V, E> adjacentNode = entry.getKey();
 				Graph.Edge<V, E> adjacentEdge = entry.getValue();
+				if (length.apply(adjacentEdge.getValue()) == null) continue;
 				if (state.containsKey(adjacentNode)) {
 					if (!state.get(adjacentNode)) {
 						// state = visiting
@@ -239,9 +240,27 @@ public class Graphs {
 	 * 
 	 * <p>The maximum flow can determined by the total flow from the src node in the returned graph.
 	 */
-	public static <V> Graph<V, Long> MaximumFlowFordFulkerson(
+	public static <V> Graph<V, Long> MaximumFlowEdmondsKarp(
 			Graph<V, Long> g, Graph.Node<V, Long> src, Graph.Node<V, Long> dest) {
-		throw new UnsupportedOperationException();
-		// TODO(chiaman): Implement this.
+		Graph<V, Long> residual = g.clone();
+		Graph<V, Long> flow = g.clone();
+		for (Graph.Edge<V, Long> e : flow.getEdges()) {
+			e.setValue(0L);
+		}
+		final Function<Long, Long> lengthFunc = new Function<Long, Long>() {
+			@Override
+			public Long apply(Long t) {
+				if (t > 0L) {
+					return 1L;
+				} else {
+					return null;
+				}
+			}
+		};
+		List<Graph.Edge<V, Long>> path;
+		while ((path = shortestPathDijkstra(residual, src, dest, lengthFunc)) != null) {
+			// TODO
+		}
+		return flow;
 	}
 }
