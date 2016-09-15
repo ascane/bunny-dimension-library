@@ -1,49 +1,68 @@
 package bunny.structure;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
 public class Graph<V, E> {
 	
-	private Set<Node<V, E>> nodes;
-	private Set<Edge<V, E>> edges;
+	private ArrayList<Node<V, E>> nodes;
+	private ArrayList<Edge<V, E>> edges;
 	
 	public Graph() {
-		nodes = new HashSet<>();
-		edges = new HashSet<>();
+		nodes = new ArrayList<>();
+		edges = new ArrayList<>();
 	}
 	
-	public Set<Node<V, E>> getNodes() {
+	public List<Node<V, E>> getNodes() {
 		return nodes;
 	}
 	
-	public Set<Edge<V, E>> getEdges() {
+	public List<Edge<V, E>> getEdges() {
 		return edges;
 	}
 	
 	public Node<V, E> createNode(V value) {
 		Node<V, E> newNode = new Node<>(value);
+		newNode.index = nodes.size();
 		nodes.add(newNode);
 		return newNode;
 	}
 	
+	public boolean containsNode(Node<V, E> node) {
+		return node.index >= 0 && node.index <= nodes.size() && nodes.get(node.index) == node;
+	}
+	
 	public boolean removeNode(Node<V, E> node) {
+		if (!containsNode(node)) {
+			return false;
+		}
 		for (Edge<V, E> edge : node.getInboundEdges().values()) {
 			removeEdge(edge.from, edge.to);
 		}
 		for (Edge<V, E> edge : node.getOutboundEdges().values()) {
 			removeEdge(edge.from, edge.to);
 		}
-		return nodes.remove(node);
+		Node<V, E> lastNode = nodes.get(nodes.size() - 1);
+		nodes.set(node.index, lastNode);
+		nodes.remove(nodes.size() - 1);
+		lastNode.index = node.index;
+		node.index = -1;
+		return true;
 	}
 	
-	public boolean hasEdge(Node<V, E> from, Node<V, E> to) {
+	public boolean containsEdge(Edge<V, E> edge) {
+		return edge.index >= 0 && edge.index <= edges.size() && edges.get(edge.index) == edge;
+	}
+	
+	public boolean containsEdge(Node<V, E> from, Node<V, E> to) {
 		return getEdge(from, to) != null;
 	}
 	
@@ -60,15 +79,13 @@ public class Graph<V, E> {
 	 * Creates an edge if it does not already exist, otherwise update the edge value.
 	 */
 	public void createEdge(E value, Node<V, E> from, Node<V, E> to) {
-		if (!nodes.contains(from)) {
-			nodes.add(from);
-		}
-		if (!nodes.contains(to)) {
-			nodes.add(to);
+		if (!containsNode(from) || !containsNode(to)) {
+			throw new IllegalArgumentException("Nodes are not in the graph!");
 		}
 		Edge<V, E> edge = new Edge<>(value, from, to);
 		from.getOutboundEdges().put(to, edge);
 		to.getInboundEdges().put(from, edge);
+		edge.index = edges.size();
 		edges.add(edge);
 	}
 	
@@ -77,13 +94,26 @@ public class Graph<V, E> {
 		createEdge(value, n2, n1);
 	}
 	
-	public void removeEdge(Node<V, E> from, Node<V, E> to) {
-		Edge<V, E> edge = getEdge(from, to);
-		if (edge != null) {
-			from.getOutboundEdges().remove(to);
-			to.getInboundEdges().remove(from);
-			edges.remove(edge);
+	public boolean removeEdge(Edge<V, E> edge) {
+		if (!containsEdge(edge)) {
+			return false;
 		}
+		edge.from.getOutboundEdges().remove(edge.to);
+		edge.to.getInboundEdges().remove(edge.from);
+		Edge<V, E> lastEdge = edges.get(edges.size() - 1);
+		edges.set(edge.index, lastEdge);
+		edges.remove(edges.size() - 1);
+		lastEdge.index = edge.index;
+		edge.index = -1;
+		return true;
+	}
+	
+	public boolean removeEdge(Node<V, E> from, Node<V, E> to) {
+		Edge<V, E> edge = getEdge(from, to);
+		if (edge == null) {
+			return false;
+		}
+		return removeEdge(edge);
 	}
 	
 	public void removeBidirectionalEdge(Node<V, E> n1, Node<V, E> n2) {
@@ -101,12 +131,11 @@ public class Graph<V, E> {
 	
 	public Graph<V, E> clone() {
 		Graph<V, E> copy = new Graph<>();
-		HashMap<Node<V, E>, Node<V, E>> map = new HashMap<>();
 		for (Node<V, E> node : nodes) {
-			map.put(node, copy.createNode(node.value));
+			copy.createNode(node.value);
 		}
 		for (Edge<V, E> edge : edges) {
-			copy.createEdge(edge.value, map.get(edge.from), map.get(edge.to));
+			copy.createEdge(edge.value, copy.nodes.get(edge.from.index), copy.nodes.get(edge.to.index));
 		}
 		return copy;
 	}
@@ -172,14 +201,18 @@ public class Graph<V, E> {
 	}
 	
 	public static class Node<V, E> {
-		
+		protected int index = -1;
 		private V value;
 		private Map<Node<V, E>, Edge<V, E>> inboundEdges, outboundEdges; // From neighbor node to edge value.
 		
-		public Node(V value) {
+		protected Node(V value) {
 			this.value = value;
 			this.inboundEdges = new HashMap<>(4);
 			this.outboundEdges = new HashMap<>(4);
+		}
+		
+		public int getIndex() {
+			return index;
 		}
 		
 		public V getValue() {
@@ -200,14 +233,18 @@ public class Graph<V, E> {
 	}
 	
 	public static class Edge<V, E> {
-		
+		protected int index = -1;
 		private E value;
 		private Node<V, E> from, to;
 		
-		public Edge(E value, Node<V, E> from, Node<V, E> to) {
+		protected Edge(E value, Node<V, E> from, Node<V, E> to) {
 			this.value = value;
 			this.from = from;
 			this.to = to;
+		}
+		
+		public int getIndex() {
+			return index;
 		}
 		
 		public E getValue() {
