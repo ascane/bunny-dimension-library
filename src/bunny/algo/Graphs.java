@@ -49,12 +49,12 @@ public class Graphs {
 			for (Entry<Node<V, E>, Edge<V, E>> entry : currentNode.getOutboundEdges().entrySet()) {
 				Graph.Node<V, E> adjacentNode = entry.getKey();
 				Graph.Edge<V, E> adjacentEdge = entry.getValue();
-				if (length.apply(adjacentEdge.getValue()) == null) continue;
+				if (length.apply(adjacentEdge.value) == null) continue;
 				if (state.containsKey(adjacentNode)) {
 					if (!state.get(adjacentNode)) {
 						// state = visiting
 						long newEstimatedDist = 
-								length.apply(adjacentEdge.getValue()) +  estimatedDist.get(currentNode);
+								length.apply(adjacentEdge.value) +  estimatedDist.get(currentNode);
 						if (newEstimatedDist < estimatedDist.get(adjacentNode)) {
 							parent.put(adjacentNode, currentNode);
 							estimatedDist.put(adjacentNode, newEstimatedDist);
@@ -66,7 +66,7 @@ public class Graphs {
 					parent.put(adjacentNode, currentNode);
 					estimatedDist.put(
 							adjacentNode,
-							length.apply(adjacentEdge.getValue()) +  estimatedDist.get(currentNode));
+							length.apply(adjacentEdge.value) +  estimatedDist.get(currentNode));
 					toVisit.add(adjacentNode);
 				}
 			}
@@ -104,14 +104,14 @@ public class Graphs {
 		Graph<V, E> newGraph = new Graph<>();
 		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
 		for (Graph.Node<V, E> node : g.getNodes()) {
-			newNodeByOldNode.put(node, newGraph.createNode(node.getValue()));
+			newNodeByOldNode.put(node, newGraph.createNode(node.value));
 		}
 		List<Graph.Edge<V, E>> edges = new ArrayList<>(g.getEdges());
 		
 		Comparator<? super Graph.Edge<V, E>> edgeComparator = new Comparator<Graph.Edge<V, E>>() {
 			@Override
 			public int compare(Edge<V, E> e1, Edge<V, E> e2) {
-				return c.compare(e1.getValue(), e2.getValue());
+				return c.compare(e1.value, e2.value);
 			}
 		};
 		Collections.sort(edges, edgeComparator);
@@ -122,7 +122,7 @@ public class Graphs {
 			if (!uf.find(edge.from()).equals(uf.find(edge.to()))) {
 				uf.union(edge.from(), edge.to());
 				newGraph.createBidirectionalEdge(
-						edge.getValue(),
+						edge.value,
 						newNodeByOldNode.get(edge.from()),
 						newNodeByOldNode.get(edge.to()));
 				count++;
@@ -157,13 +157,13 @@ public class Graphs {
 		Graph<V, E> newGraph = new Graph<>();
 		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
 		for (Graph.Node<V, E> node : nodes) {
-			newNodeByOldNode.put(node, newGraph.createNode(node.getValue()));
+			newNodeByOldNode.put(node, newGraph.createNode(node.value));
 		}
 		for (Graph.Node<V, E> node : nodes) {
 			for (Graph.Edge<V, E> edge : node.getOutboundEdges().values()) {
 				if (nodes.contains(edge.to())) {
 					newGraph.createEdge(
-							edge.getValue(),
+							edge.value,
 							newNodeByOldNode.get(edge.from()),
 							newNodeByOldNode.get(edge.to()));
 				}
@@ -244,8 +244,16 @@ public class Graphs {
 			Graph<V, Long> g, Graph.Node<V, Long> src, Graph.Node<V, Long> dest) {
 		Graph<V, Long> residual = g.clone();
 		Graph<V, Long> flow = g.clone();
+		for (Graph.Edge<V, Long> e : residual.getEdges()) {
+			if (residual.getInverseEdge(e) == null) {
+				residual.createEdge(0L, e.to(), e.from());
+			}
+		}
 		for (Graph.Edge<V, Long> e : flow.getEdges()) {
-			e.setValue(0L);
+			e.value = 0L;
+			if (flow.getInverseEdge(e) == null) {
+				flow.createEdge(0L, e.to(), e.from());
+			}
 		}
 		final Function<Long, Long> lengthFunc = new Function<Long, Long>() {
 			@Override
@@ -258,9 +266,31 @@ public class Graphs {
 			}
 		};
 		List<Graph.Edge<V, Long>> path;
+		Long increase = 0L;
 		while ((path = shortestPathDijkstra(residual, src, dest, lengthFunc)) != null) {
-			// TODO
+			for (Graph.Edge<V, Long> residualEdge : path) {
+				increase = Math.max(increase, residualEdge.value);
+			}
+			for (Graph.Edge<V, Long> residualEdge : path) {
+				residualEdge.value -= increase;
+				residual.getInverseEdge(residualEdge).value += increase;
+				
+				Graph.Edge<V, Long> flowEdge = flow.getEdge(residualEdge.getIndex());
+				flowEdge.value += increase;
+				flow.getInverseEdge(flowEdge).value -= increase;
+			}
 		}
 		return flow;
+	}
+	
+	public static <V> Long MaximumFlowValueEdmondsKarp(
+			Graph<V, Long> g, Graph.Node<V, Long> src, Graph.Node<V, Long> dest) {
+		Graph<V, Long> flow = MaximumFlowEdmondsKarp(g, src, dest);
+		Node<V, Long> flowSrc = flow.getNode(src.getIndex());
+		Long result = 0L;
+		for (Graph.Edge<V, Long> outEdge : flowSrc.getOutboundEdges().values()) {
+			result += outEdge.value;
+		}
+		return result;
 	}
 }

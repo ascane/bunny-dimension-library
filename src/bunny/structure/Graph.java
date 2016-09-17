@@ -21,12 +21,12 @@ public class Graph<V, E> {
 		edges = new ArrayList<>();
 	}
 	
-	public List<Node<V, E>> getNodes() {
-		return nodes;
+	public Node<V, E> getNode(int index) {
+		return nodes.get(index);
 	}
 	
-	public List<Edge<V, E>> getEdges() {
-		return edges;
+	public List<Node<V, E>> getNodes() {
+		return nodes;
 	}
 	
 	public Node<V, E> createNode(V value) {
@@ -58,12 +58,8 @@ public class Graph<V, E> {
 		return true;
 	}
 	
-	public boolean containsEdge(Edge<V, E> edge) {
-		return edge.index >= 0 && edge.index <= edges.size() && edges.get(edge.index) == edge;
-	}
-	
-	public boolean containsEdge(Node<V, E> from, Node<V, E> to) {
-		return getEdge(from, to) != null;
+	public Edge<V, E> getEdge(int index) {
+		return edges.get(index);
 	}
 	
 	/**
@@ -73,6 +69,22 @@ public class Graph<V, E> {
 	 */
 	public Edge<V, E> getEdge(Node<V, E> from, Node<V, E> to) {
 		return from.outboundEdges.get(to);
+	}
+	
+	public Edge<V, E> getInverseEdge(Edge<V, E> edge) {
+		return edge.to.outboundEdges.get(edge.from);
+	}
+	
+	public List<Edge<V, E>> getEdges() {
+		return edges;
+	}
+	
+	public boolean containsEdge(Edge<V, E> edge) {
+		return edge.index >= 0 && edge.index <= edges.size() && edges.get(edge.index) == edge;
+	}
+	
+	public boolean containsEdge(Node<V, E> from, Node<V, E> to) {
+		return getEdge(from, to) != null;
 	}
 	
 	/**
@@ -202,7 +214,7 @@ public class Graph<V, E> {
 	
 	public static class Node<V, E> {
 		protected int index = -1;
-		private V value;
+		public V value;
 		private Map<Node<V, E>, Edge<V, E>> inboundEdges, outboundEdges; // From neighbor node to edge value.
 		
 		protected Node(V value) {
@@ -213,14 +225,6 @@ public class Graph<V, E> {
 		
 		public int getIndex() {
 			return index;
-		}
-		
-		public V getValue() {
-			return value;
-		}
-		
-		public void setValue(V value) {
-			this.value = value;
 		}
 		
 		public Map<Node<V, E>, Edge<V, E>> getInboundEdges() {
@@ -234,7 +238,7 @@ public class Graph<V, E> {
 	
 	public static class Edge<V, E> {
 		protected int index = -1;
-		private E value;
+		public E value;
 		private Node<V, E> from, to;
 		
 		protected Edge(E value, Node<V, E> from, Node<V, E> to) {
@@ -245,14 +249,6 @@ public class Graph<V, E> {
 		
 		public int getIndex() {
 			return index;
-		}
-		
-		public E getValue() {
-			return value;
-		}
-		
-		public void setValue(E value) {
-			this.value = value;
 		}
 		
 		public Node<V, E> from() {

@@ -12,7 +12,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 
-import bunny.structure.Graph.Node;
 import bunny.util.Functions;
 
 public class Tree<T> {
@@ -136,7 +135,7 @@ public class Tree<T> {
 	
 	private static <T, E> Tree<T> from(Graph<T, E> graph, Graph.Node<T, E> root, Set<Graph.Node<T, E>> visited) {
 		visited.add(root);
-		Tree<T> tree = new Tree<T>(root.getValue());
+		Tree<T> tree = new Tree<T>(root.value);
 		for (Graph.Node<T, E> neighbor : root.getOutboundEdges().keySet()) {
 			if (!visited.contains(neighbor)) {
 				tree.getChildren().add(from(graph, neighbor, visited));
