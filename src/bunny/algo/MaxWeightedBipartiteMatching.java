@@ -2,7 +2,8 @@ package bunny.algo;
 
 import java.util.Arrays;
 
-//Hungarian algorithm. See http://www.cse.ust.hk/~golin/COMP572/Notes/Matching.pdf.
+// Hungarian algorithm.
+// See http://www.cse.ust.hk/~golin/COMP572/Notes/Matching.pdf.
 public class MaxWeightedBipartiteMatching {
 	static final int FREE = -1;
 	static final int NO_PARENT = -1;
