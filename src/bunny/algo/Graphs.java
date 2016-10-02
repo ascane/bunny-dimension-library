@@ -2,6 +2,7 @@ package bunny.algo;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Function;
 
 import bunny.structure.Graph;
@@ -22,6 +24,27 @@ import bunny.util.Ordering;
 
 public class Graphs {
 
+	public static <V, E> void contractNodes(Graph<V, E> g, Collection<Graph.Node<V, E>> nodes) {
+		Graph.Node<V, E> center = null;
+		for (Graph.Node<V, E> node : nodes) {
+			if (center == null) {
+				center = node;
+				continue;
+			}
+			for (Entry<Graph.Node<V, E>, Graph.Edge<V, E>> entry : node.getOutboundEdges().entrySet()) {
+				if (entry.getKey() != center && !g.containsEdge(center, entry.getKey())) {
+					g.createEdge(entry.getValue().value, center, entry.getKey());
+				}
+			}
+			for (Entry<Graph.Node<V, E>, Graph.Edge<V, E>> entry : node.getInboundEdges().entrySet()) {
+				if (entry.getKey() != center && !g.containsEdge(entry.getKey(), center)) {
+					g.createEdge(entry.getValue().value, entry.getKey(), center);
+				}
+			}
+			g.removeNode(node);
+		}
+	}
+	
 	/** Returns the shortest directional path determined by Dijkstra's algorithm. */
 	public static <V, E> List<Graph.Edge<V, E>> shortestPathDijkstra(
 			Graph<V, E> g, Graph.Node<V, E> src, Graph.Node<V, E> dest, Function<E, Long> length) {
@@ -54,7 +77,7 @@ public class Graphs {
 					if (!state.get(adjacentNode)) {
 						// state = visiting
 						long newEstimatedDist = 
-								length.apply(adjacentEdge.value) +  estimatedDist.get(currentNode);
+								length.apply(adjacentEdge.value) + estimatedDist.get(currentNode);
 						if (newEstimatedDist < estimatedDist.get(adjacentNode)) {
 							parent.put(adjacentNode, currentNode);
 							estimatedDist.put(adjacentNode, newEstimatedDist);
@@ -102,9 +125,9 @@ public class Graphs {
 	 */
 	public static <V, E> Graph<V, E> minimumSpanningTreeKruskal(Graph<V, E> g, final Comparator<? super E> c) {
 		Graph<V, E> newGraph = new Graph<>();
-		Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
+		//Map<Graph.Node<V, E>, Graph.Node<V, E>> newNodeByOldNode = new HashMap<>();
 		for (Graph.Node<V, E> node : g.getNodes()) {
-			newNodeByOldNode.put(node, newGraph.createNode(node.value));
+			newGraph.createNode(node.value);
 		}
 		List<Graph.Edge<V, E>> edges = new ArrayList<>(g.getEdges());
 		
@@ -123,8 +146,8 @@ public class Graphs {
 				uf.union(edge.from(), edge.to());
 				newGraph.createBidirectionalEdge(
 						edge.value,
-						newNodeByOldNode.get(edge.from()),
-						newNodeByOldNode.get(edge.to()));
+						newGraph.getNodes().get(edge.from().getIndex()),
+						newGraph.getNodes().get(edge.to().getIndex()));
 				count++;
 			}
 			if (count == g.getNodes().size() - 1) {
@@ -177,7 +200,7 @@ public class Graphs {
 	 * 
 	 * @throws IllegalArgumentException if the node is not in the graph
 	 */
-	public static <V, E> Set<Graph.Node<V, E>> getConnectedNodes(Graph<V, E> g, Graph.Node<V, E> node) {
+	public static <V, E> Set<Graph.Node<V, E>> getConnectedComponentNodes(Graph<V, E> g, Graph.Node<V, E> node) {
 		if (!g.getNodes().contains(node)) {
 			throw new IllegalArgumentException("The node is not in the graph!");
 		}
@@ -208,16 +231,16 @@ public class Graphs {
 	 * @throws IllegalArgumentException if the node is not in the graph
 	 */
 	public static <V, E> Graph<V, E> getConnectedComponent(Graph<V, E> g, Graph.Node<V, E> node) {
-		return getSubgraph(g, getConnectedNodes(g, node));
+		return getSubgraph(g, getConnectedComponentNodes(g, node));
 	}
 	
 	/** Returns a list of nodes of connected components. */
-	public static <V, E> List<Set<Graph.Node<V, E>>> getNodesInAllConnectedComponents(Graph<V, E> g) {
+	public static <V, E> List<Set<Graph.Node<V, E>>> getConnectedComponentsNodes(Graph<V, E> g) {
 		Set<Graph.Node<V, E>> explored = new HashSet<>();
 		List<Set<Graph.Node<V, E>>> result = new ArrayList<>();
 		for (Graph.Node<V, E> node : g.getNodes()) {
 			if (!explored.contains(node)) {
-				Set<Graph.Node<V, E>> connectedNodes = getConnectedNodes(g, node);
+				Set<Graph.Node<V, E>> connectedNodes = getConnectedComponentNodes(g, node);
 				result.add(connectedNodes);
 				explored.addAll(connectedNodes);
 			}
@@ -226,12 +249,54 @@ public class Graphs {
 	}
 	
 	/** Returns a list of {@link Graph} instances of connected components. */
-	public static <V, E> List<Graph<V, E>> getAllConnectedComponents(Graph<V, E> g) {
+	public static <V, E> List<Graph<V, E>> getConnectedComponents(Graph<V, E> g) {
 		List<Graph<V, E>> result = new ArrayList<>();
-		for (Set<Graph.Node<V, E>> nodes : getNodesInAllConnectedComponents(g)) {
+		for (Set<Graph.Node<V, E>> nodes : getConnectedComponentsNodes(g)) {
 			result.add(getSubgraph(g, nodes));
 		}
 		return result;
+	}
+	
+	public static <V, E> List<Set<Graph.Node<V, E>>> getStronglyConnectedComponentsNodes(Graph<V, E> g) {
+		List<Node<V, E>> list = new ArrayList<>();
+		Set<Node<V, E>> visited = new HashSet<>();
+		List<Set<Graph.Node<V, E>>> components = new ArrayList<>();
+		for (Graph.Node<V, E> node : g.getNodes()) {
+			visitDFS(g, node, visited, list, false);
+		}
+		visited = new HashSet<>();
+		for (int i = list.size() - 1; i >= 0; i--) {
+			Set<Graph.Node<V, E>> component = new HashSet<>();
+			visitDFS(g, list.get(i), visited, component, true);
+			components.add(component);
+		}
+		return components;
+	}
+	private static <V, E> void visitDFS(Graph<V, E> g, Graph.Node<V, E> source, Set<Node<V, E>> visited, Collection<Node<V, E>> list, boolean inverseGraph) {
+		if (visited.contains(source)) return;
+		visited.add(source);
+		Stack<Node<V, E>> stack = new Stack<>();
+		Stack<Boolean> processed = new Stack<>();
+		stack.push(source);
+		processed.push(false);
+		while (stack.size() > 0) {
+			Node<V, E> current = stack.peek();
+			if (!processed.peek()) {
+				processed.pop();
+				processed.push(true);
+				visited.add(current);
+				for (Graph.Node<V, E> neighbor : current.getOutboundEdges().keySet()) {
+					if (!visited.contains(neighbor)) {
+						stack.push(neighbor);
+						processed.push(false);
+					}
+				}
+			} else {
+				list.add(current);
+				stack.pop();
+				processed.pop();
+			}
+		}
 	}
 	
 	/**
@@ -240,7 +305,7 @@ public class Graphs {
 	 * 
 	 * <p>The maximum flow can determined by the total flow from the src node in the returned graph.
 	 */
-	public static <V> Graph<V, Long> MaximumFlowEdmondsKarp(
+	public static <V> Graph<V, Long> maximumFlowEdmondsKarp(
 			Graph<V, Long> g, Graph.Node<V, Long> src, Graph.Node<V, Long> dest) {
 		Graph<V, Long> residual = g.clone();
 		Graph<V, Long> flow = g.clone();
@@ -283,9 +348,9 @@ public class Graphs {
 		return flow;
 	}
 	
-	public static <V> Long MaximumFlowValueEdmondsKarp(
+	public static <V> Long maximumFlowValueEdmondsKarp(
 			Graph<V, Long> g, Graph.Node<V, Long> src, Graph.Node<V, Long> dest) {
-		Graph<V, Long> flow = MaximumFlowEdmondsKarp(g, src, dest);
+		Graph<V, Long> flow = maximumFlowEdmondsKarp(g, src, dest);
 		Node<V, Long> flowSrc = flow.getNode(src.getIndex());
 		Long result = 0L;
 		for (Graph.Edge<V, Long> outEdge : flowSrc.getOutboundEdges().values()) {
